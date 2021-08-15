@@ -1,10 +1,13 @@
 package com.wellseecoding.server.user;
 
-import lombok.Getter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "users")
 public class User {

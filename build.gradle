@@ -24,6 +24,8 @@ dependencies {
 	implementation 'com.nimbusds:nimbus-jose-jwt'
 	implementation 'org.apache.commons:commons-lang3'
 	implementation 'commons-codec:commons-codec'
+	implementation 'commons-validator:commons-validator:1.7'
+	implementation 'com.google.guava:guava:30.1.1-jre'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.projectlombok:lombok'
