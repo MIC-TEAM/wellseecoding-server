@@ -1,12 +1,12 @@
 CREATE TABLE `users`
 (
-    `id`            INT NOT NULL AUTO_INCREMENT,
-    `username`      VARCHAR(50) NOT NULL,
-    `password`      VARCHAR(50) NULL,
+    `id`            INT          NOT NULL AUTO_INCREMENT,
+    `username`      VARCHAR(50)  NOT NULL,
+    `password`      VARCHAR(512) NULL,
     `email`         VARCHAR(100) NOT NULL,
     `refresh_token` VARCHAR(512) NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX           `idx1_email` (`email`),
+    UNIQUE `idx1_email` (`email`),
     INDEX           `idx2_refresh_token` (`refresh_token`)
 );
 
