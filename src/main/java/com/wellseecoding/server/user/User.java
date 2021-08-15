@@ -13,6 +13,7 @@ public class User {
     private Long id;
     private String username;
     private String password;
+    private String email;
     @Column(name = "refresh_token")
     private String refreshToken;
 }
