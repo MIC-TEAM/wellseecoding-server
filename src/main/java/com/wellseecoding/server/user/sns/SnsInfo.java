@@ -14,8 +14,4 @@ public class SnsInfo {
     private User user;
     @EmbeddedId
     private SnsInfoKey key;
-    @Column(name = "access_token")
-    private String accessToken;
-    @Column(name = "refresh_token")
-    private String refreshToken;
 }
