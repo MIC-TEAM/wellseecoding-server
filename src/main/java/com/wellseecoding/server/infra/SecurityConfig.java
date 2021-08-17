@@ -1,7 +1,7 @@
-package com.wellseecoding.server.security;
+package com.wellseecoding.server.infra;
 
-import com.wellseecoding.server.security.jwt.DirectJweTokenMapper;
-import com.wellseecoding.server.security.jwt.JwtTokenMapper;
+import com.wellseecoding.server.infra.jwt.DirectJweTokenMapper;
+import com.wellseecoding.server.infra.jwt.JwtTokenMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
