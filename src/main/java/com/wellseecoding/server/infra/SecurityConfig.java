@@ -8,9 +8,9 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SecurityConfig {
-    @Value("${jwt.jwe.encryption-algorithm}")
+    @Value("${wellseecoding.jwt.jwe.encryption-algorithm}")
     private String jweEncryptionAlgorithm;
-    @Value("${jwt.jwe.key}")
+    @Value("${wellseecoding.jwt.jwe.key}")
     private String jweKey;
 
     @Bean
