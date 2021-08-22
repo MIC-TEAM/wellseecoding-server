@@ -1,4 +1,4 @@
-package com.wellseecoding.server.security.jwt;
+package com.wellseecoding.server.infra.jwt;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.DirectDecrypter;

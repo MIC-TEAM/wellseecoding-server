@@ -1,4 +1,4 @@
-package com.wellseecoding.server.security.jwt;
+package com.wellseecoding.server.infra.jwt;
 
 import com.nimbusds.jose.EncryptionMethod;
 import org.apache.commons.lang3.RandomStringUtils;

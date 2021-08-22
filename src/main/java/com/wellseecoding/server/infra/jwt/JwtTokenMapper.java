@@ -1,4 +1,4 @@
-package com.wellseecoding.server.security.jwt;
+package com.wellseecoding.server.infra.jwt;
 
 public interface JwtTokenMapper {
     String serialize(String payload);

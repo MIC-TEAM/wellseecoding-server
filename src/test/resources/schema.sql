@@ -15,8 +15,6 @@ CREATE TABLE `sns_info`
     `user_id`       INT          NOT NULL,
     `sns_id`        varchar(255) NOT NULL,
     `sns_type`      varchar(10)  NOT NULL,
-    `access_token`  VARCHAR(512) NOT NULL,
-    `refresh_token` VARCHAR(512) NOT NULL,
     PRIMARY KEY (`sns_id`, `sns_type`),
     INDEX           `idx1_user_id` (`user_id`),
     CONSTRAINT `user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)

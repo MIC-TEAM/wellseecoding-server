@@ -1,4 +1,4 @@
-package com.wellseecoding.server.security.jwt;
+package com.wellseecoding.server.infra.jwt;
 
 public class JweDeserializeException extends RuntimeException {
     public JweDeserializeException(Throwable cause) {
