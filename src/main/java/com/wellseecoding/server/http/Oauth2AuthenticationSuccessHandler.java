@@ -1,6 +1,5 @@
 package com.wellseecoding.server.http;
 
-import com.wellseecoding.server.http.token.AccessTokenMapper;
 import com.wellseecoding.server.infra.sns.SnsUserInfo;
 import com.wellseecoding.server.infra.sns.SnsUserInfoResolver;
 import com.wellseecoding.server.service.UserService;
@@ -18,23 +17,15 @@ import java.util.Map;
 @AllArgsConstructor
 public class Oauth2AuthenticationSuccessHandler implements ServerAuthenticationSuccessHandler {
     private final ServerAuthenticationSuccessHandler delegate;
-    private final AccessTokenMapper accessTokenMapper;
     private final UserService userService;
+    private final boolean shouldEnforceStrictSameSite;
 
     @Override
     public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
         return getOrSaveSnsUser(authentication)
                 .doOnNext(snsInfo -> {
-                    final String accessToken = accessTokenMapper.serialize(snsInfo.getUser().getId());
-                    final ResponseCookie accessTokenCookie = ResponseCookie.from(CookieNameRegistry.ACCESS_TOKEN, accessToken).build();
-                    webFilterExchange.getExchange().getResponse().addCookie(accessTokenCookie);
-                })
-                .doOnNext(snsInfo -> {
                     final String refreshToken = snsInfo.getUser().getRefreshToken();
-                    final ResponseCookie refreshTokenCookie = ResponseCookie.from(CookieNameRegistry.REFRESH_TOKEN, refreshToken)
-                                                                            .httpOnly(true)
-                                                                            .sameSite("Strict")
-                                                                            .build();
+                    final ResponseCookie refreshTokenCookie = generateCookieForRefreshToken(refreshToken);
                     webFilterExchange.getExchange().getResponse().addCookie(refreshTokenCookie);
                 })
                 .then(delegate.onAuthenticationSuccess(webFilterExchange, authentication));
@@ -52,6 +43,21 @@ public class Oauth2AuthenticationSuccessHandler implements ServerAuthenticationS
                                                           snsUserInfo.getEmail()));
         } catch (Exception e) {
             return Mono.error(e);
+        }
+    }
+
+    private ResponseCookie generateCookieForRefreshToken(String refreshToken) {
+        if (shouldEnforceStrictSameSite) {
+            return ResponseCookie.from(CookieNameRegistry.REFRESH_TOKEN, refreshToken)
+                                 .httpOnly(true)
+                                 .sameSite("Strict")
+                                 .build();
+        } else {
+            return ResponseCookie.from(CookieNameRegistry.REFRESH_TOKEN, refreshToken)
+                                 .httpOnly(true)
+                                 .sameSite("None")
+                                 .secure(true)
+                                 .build();
         }
     }
 }

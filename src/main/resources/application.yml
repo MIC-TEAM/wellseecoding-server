@@ -41,6 +41,8 @@ wellseecoding:
       oauth2-failure: "${WC_OAUTH2_FAILURE_PAGE}"
     access-token:
       duration-in-seconds: 600
+    refresh-token:
+      strict-same-site: false
   jwt:
     jwe:
       algorithm: "dir"
