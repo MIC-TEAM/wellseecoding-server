@@ -1,6 +1,5 @@
 package com.wellseecoding.server.http;
 
-import com.wellseecoding.server.http.token.AccessTokenMapper;
 import com.wellseecoding.server.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,13 +15,15 @@ public class WebSecurityConfig {
     private String authSuccessPage;
     @Value("${wellseecoding.http.uris.oauth2-failure}")
     private String authFailurePage;
+    @Value("${wellseecoding.http.refresh-token.strict-same-site}")
+    private boolean shouldEnforceStrictSameSite;
 
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, AccessTokenMapper accessTokenMapper, UserService userService) {
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, UserService userService) {
         final RedirectServerAuthenticationSuccessHandler authSuccessHandler = new RedirectServerAuthenticationSuccessHandler(authSuccessPage);
         return http
                 .oauth2Login()
-                .authenticationSuccessHandler(new Oauth2AuthenticationSuccessHandler(authSuccessHandler, accessTokenMapper, userService))
+                .authenticationSuccessHandler(new Oauth2AuthenticationSuccessHandler(authSuccessHandler, userService, shouldEnforceStrictSameSite))
                 .authenticationFailureHandler(new RedirectServerAuthenticationFailureHandler(authFailurePage))
                 .and()
                 .build();
