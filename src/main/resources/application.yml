@@ -44,3 +44,5 @@ wellseecoding:
       timeout: 600
       claims:
         issuer: "${WC_JWT_ISSUER}"
+    cors:
+      origins: "${WC_CORS_ORIGINS}"
