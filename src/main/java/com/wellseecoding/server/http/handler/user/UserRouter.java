@@ -1,5 +1,6 @@
-package com.wellseecoding.server.http.router;
+package com.wellseecoding.server.http.handler.user;
 
+import com.wellseecoding.server.http.handler.user.profile.UserProfileHandler;
 import com.wellseecoding.server.http.handler.user.register.UserRegisterHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,9 +14,10 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 @Configuration
 public class UserRouter {
     @Bean
-    public RouterFunction<ServerResponse> routeUserRequests(UserRegisterHandler userRegisterHandler) {
+    public RouterFunction<ServerResponse> routeUserRequests(UserRegisterHandler userRegisterHandler, UserProfileHandler userProfileHandler) {
         return RouterFunctions.route()
                               .POST("/api/v1/users", contentType(MediaType.APPLICATION_JSON), userRegisterHandler::handle)
+                              .GET("/api/v1/users/profile", userProfileHandler::get)
                               .build();
     }
 }
