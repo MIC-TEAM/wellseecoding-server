@@ -40,11 +40,7 @@ wellseecoding:
       oauth2-success: "${WC_OAUTH2_SUCCESS_PAGE}"
       oauth2-failure: "${WC_OAUTH2_FAILURE_PAGE}"
     access-token:
-      duration-in-seconds: 600
-    refresh-token:
-      strict-same-site: false
-  jwt:
-    jwe:
-      algorithm: "dir"
-      encryption-algorithm: "A256GCM"
-      key: "${WC_JWE_KEY}"
+      shared-secret: "${WC_JWT_SHARED_SECRET}"
+      timeout: 600
+      claims:
+        issuer: "${WC_JWT_ISSUER}"
