@@ -1,31 +1,31 @@
 package com.wellseecoding.server.http;
 
-import com.wellseecoding.server.service.UserService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity.CsrfSpec;
+import org.springframework.security.config.web.server.ServerHttpSecurity.HttpBasicSpec;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.authentication.RedirectServerAuthenticationFailureHandler;
-import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler;
+import org.springframework.security.web.server.authentication.ServerAuthenticationFailureHandler;
+import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler;
 
 @EnableWebFluxSecurity
 public class WebSecurityConfig {
-    @Value("${wellseecoding.http.uris.oauth2-success}")
-    private String authSuccessPage;
-    @Value("${wellseecoding.http.uris.oauth2-failure}")
-    private String authFailurePage;
-    @Value("${wellseecoding.http.refresh-token.strict-same-site}")
-    private boolean shouldEnforceStrictSameSite;
-
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, UserService userService) {
-        final RedirectServerAuthenticationSuccessHandler authSuccessHandler = new RedirectServerAuthenticationSuccessHandler(authSuccessPage);
-        return http
-                .oauth2Login()
-                .authenticationSuccessHandler(new Oauth2AuthenticationSuccessHandler(authSuccessHandler, userService, shouldEnforceStrictSameSite))
-                .authenticationFailureHandler(new RedirectServerAuthenticationFailureHandler(authFailurePage))
-                .and()
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity serverHttpSecurity,
+                                                         ServerAuthenticationSuccessHandler serverAuthenticationSuccessHandler,
+                                                         ServerAuthenticationFailureHandler serverAuthenticationFailureHandler) {
+        return serverHttpSecurity
+                .httpBasic(HttpBasicSpec::disable)
+                .csrf(CsrfSpec::disable)
+                .authorizeExchange(authorizeExchangeSpec -> {
+                    authorizeExchangeSpec.pathMatchers("/api/v1/users/profile/**").authenticated()
+                                         .anyExchange().permitAll();
+                })
+                .oauth2Login(oAuth2LoginSpec -> {
+                    oAuth2LoginSpec.authenticationSuccessHandler(serverAuthenticationSuccessHandler)
+                                   .authenticationFailureHandler(serverAuthenticationFailureHandler);
+                })
                 .build();
     }
 }
