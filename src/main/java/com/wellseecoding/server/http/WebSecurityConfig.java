@@ -26,6 +26,7 @@ public class WebSecurityConfig {
                     oAuth2LoginSpec.authenticationSuccessHandler(serverAuthenticationSuccessHandler)
                                    .authenticationFailureHandler(serverAuthenticationFailureHandler);
                 })
+                .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)
                 .build();
     }
 }
