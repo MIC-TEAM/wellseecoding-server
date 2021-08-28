@@ -37,8 +37,8 @@ spring:
 wellseecoding:
   http:
     uris:
-      oauth2-success: "${WC_OAUTH2_SUCCESS_PAGE}"
-      oauth2-failure: "${WC_OAUTH2_FAILURE_PAGE}"
+      sns-success: "${WC_SNS_SUCCESS_PAGE}"
+      sns-failure: "${WC_SNS_FAILURE_PAGE}"
     access-token:
       shared-secret: "${WC_JWT_SHARED_SECRET}"
       timeout: 600
