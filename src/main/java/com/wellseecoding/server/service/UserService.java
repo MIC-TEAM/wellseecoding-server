@@ -1,14 +1,21 @@
 package com.wellseecoding.server.service;
 
 import com.google.common.hash.HashFunction;
+import com.wellseecoding.server.http.handler.user.profile.model.Education;
+import com.wellseecoding.server.http.handler.user.profile.model.Link;
+import com.wellseecoding.server.http.handler.user.profile.model.Work;
 import com.wellseecoding.server.user.User;
 import com.wellseecoding.server.user.UserRepository;
+import com.wellseecoding.server.user.education.EducationRepository;
+import com.wellseecoding.server.user.link.LinkRepository;
 import com.wellseecoding.server.user.sns.SnsInfo;
 import com.wellseecoding.server.user.sns.SnsInfoKey;
 import com.wellseecoding.server.user.sns.SnsInfoRepository;
+import com.wellseecoding.server.user.work.WorkRepository;
 import lombok.AllArgsConstructor;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
@@ -18,9 +25,77 @@ import static java.util.Objects.nonNull;
 @AllArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final EducationRepository educationRepository;
+    private final LinkRepository linkRepository;
+    private final WorkRepository workRepository;
     private final SnsInfoRepository snsInfoRepository;
     private final HashFunction passwordHashFunction;
     private final Supplier<String> randomStringGenerator;
+
+    public CompletableFuture<User> getUser(long userId) {
+        return CompletableFuture.supplyAsync(() -> userRepository.findById(userId)).thenApply(optionalUser -> optionalUser.get());
+    }
+
+    public CompletableFuture<Void> setStatus(long userId, String status) {
+        return getUser(userId)
+                .thenAccept(user -> {
+                    user.setStatus(status);
+                    userRepository.save(user);
+                });
+    }
+
+    public CompletableFuture<Void> setAboutMe(long userId, String aboutMe) {
+        return getUser(userId)
+                .thenAccept(user -> {
+                    user.setAboutMe(aboutMe);
+                    userRepository.save(user);
+                });
+    }
+
+    public CompletableFuture<Void> setEducations(long userId, List<Education> educations) {
+        return CompletableFuture.supplyAsync(() -> {
+            educationRepository.findByUserId(userId).forEach(educationRepository::delete);
+            for (Education education : educations) {
+                com.wellseecoding.server.user.education.Education educationEntity = new com.wellseecoding.server.user.education.Education();
+                educationEntity.setUserId(userId);
+                educationEntity.setDegree(education.getDegree());
+                educationEntity.setMajor(education.getMajor());
+                educationEntity.setGraduated(education.isGraduated());
+                educationRepository.save(educationEntity);
+            }
+            return null;
+        });
+    }
+
+    public CompletableFuture<Void> setLinks(long userId, List<Link> links) {
+        return CompletableFuture.supplyAsync(() -> {
+            linkRepository.findByUserId(userId).forEach(linkRepository::delete);
+            for (Link link : links) {
+                com.wellseecoding.server.user.link.Link linkEntity = new com.wellseecoding.server.user.link.Link();
+                linkEntity.setUserId(userId);
+                linkEntity.setName(link.getName());
+                linkEntity.setLink(link.getLink());
+                linkEntity.setDescription(link.getDescription());
+                linkRepository.save(linkEntity);
+            }
+            return null;
+        });
+    }
+
+    public CompletableFuture<Void> setWorks(long userId, List<Work> works) {
+        return CompletableFuture.supplyAsync(() -> {
+            workRepository.findByUserId(userId).forEach(workRepository::delete);
+            for (Work work : works) {
+                com.wellseecoding.server.user.work.Work workEntity = new com.wellseecoding.server.user.work.Work();
+                workEntity.setUserId(userId);
+                workEntity.setRole(work.getRole());
+                workEntity.setTechnology(work.getTechnology());
+                workEntity.setYears(work.getYears());
+                workRepository.save(workEntity);
+            }
+            return null;
+        });
+    }
 
     public CompletableFuture<User> createUser(String username, String password, String email) {
         return createUser(User.builder()
