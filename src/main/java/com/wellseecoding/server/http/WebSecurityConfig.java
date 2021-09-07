@@ -30,6 +30,7 @@ public class WebSecurityConfig {
                 .csrf(CsrfSpec::disable)
                 .authorizeExchange(authorizeExchangeSpec -> {
                     authorizeExchangeSpec.pathMatchers("/api/v1/users/profile/**").authenticated()
+                                         .pathMatchers("/api/v1/posts/**").authenticated()
                                          .anyExchange().permitAll();
                 })
                 .oauth2Login(oAuth2LoginSpec -> {

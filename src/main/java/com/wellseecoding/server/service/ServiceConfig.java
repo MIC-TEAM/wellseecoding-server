@@ -1,6 +1,7 @@
 package com.wellseecoding.server.service;
 
 import com.google.common.hash.Hashing;
+import com.wellseecoding.server.post.PostRepository;
 import com.wellseecoding.server.user.UserRepository;
 import com.wellseecoding.server.user.education.EducationRepository;
 import com.wellseecoding.server.user.link.LinkRepository;
@@ -27,5 +28,10 @@ public class ServiceConfig {
                 snsInfoRepository,
                 Hashing.sha512(), () -> UUID.randomUUID().toString()
         );
+    }
+
+    @Bean
+    public PostService postService(PostRepository postRepository) {
+        return new PostService(postRepository);
     }
 }

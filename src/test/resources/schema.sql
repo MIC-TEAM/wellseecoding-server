@@ -57,3 +57,18 @@ CREATE TABLE `work`
     INDEX        `idx1_user_id` (`user_id`),
     CONSTRAINT `work_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 );
+
+CREATE TABLE `posts`
+(
+    `id`            INT           NOT NULL AUTO_INCREMENT,
+    `user_id`       INT           NOT NULL,
+    `name`          varchar(50)   NOT NULL,
+    `deadline`      varchar(50)   NOT NULL,
+    `schedule`      varchar(50)   NOT NULL,
+    `summary`       varchar(1024) NOT NULL,
+    `qualification` varchar(512)  NOT NULL,
+    `size`          varchar(128)  NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX           `idx1_user_id` (`user_id`),
+    CONSTRAINT `posts_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+);
