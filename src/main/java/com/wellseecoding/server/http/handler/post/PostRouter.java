@@ -14,10 +14,15 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 public class PostRouter {
     @Bean
     public RouterFunction<ServerResponse> routePostRequests(PostHandler postHandler) {
-        return RouterFunctions.route().path("/api/v1/posts", builder -> {
-            builder.POST("", contentType(MediaType.APPLICATION_JSON), postHandler::write)
-                   .GET("", postHandler::get)
-                   .filter(new UserIdExtractor());
+        return RouterFunctions.route().path("/api/v1/posts", postsBuilder -> {
+            postsBuilder.POST("", contentType(MediaType.APPLICATION_JSON), postHandler::write)
+                        .GET("", postHandler::getAll)
+                        .path("/{id}", postBuilder -> {
+                            postBuilder.GET("", postHandler::get)
+                                       .DELETE("", postHandler::remove)
+                                       .PUT("", contentType(MediaType.APPLICATION_JSON), postHandler::overwrite);
+                        })
+                        .filter(new UserIdExtractor());
         }).build();
     }
 }
