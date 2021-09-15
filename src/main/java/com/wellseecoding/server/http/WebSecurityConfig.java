@@ -49,7 +49,7 @@ public class WebSecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList(StringUtils.split(corsOrigins, ",")));
         configuration.setAllowCredentials(true);
         configuration.setAllowedMethods(Arrays.asList(
-                HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name()));
+                HttpMethod.GET.name(), HttpMethod.POST.name(), HttpMethod.PUT.name(), HttpMethod.DELETE.name()));
         configuration.setAllowedHeaders(Collections.singletonList("*"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
