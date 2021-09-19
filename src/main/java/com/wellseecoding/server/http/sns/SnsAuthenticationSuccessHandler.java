@@ -26,7 +26,7 @@ public class SnsAuthenticationSuccessHandler implements ServerAuthenticationSucc
     public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
         return getOrSaveSnsUser(authentication)
                 .doOnNext(snsInfo -> {
-                    final String accessToken = accessTokenGenerator.generate(snsInfo.getUser().getId());
+                    final String accessToken = accessTokenGenerator.generate(snsInfo.getUser().getId(), snsInfo.getUser().getUsername());
                     final ResponseCookie accessTokenCookie = ResponseCookie.from(CookieNameRegistry.ACCESS_TOKEN, accessToken).build();
                     webFilterExchange.getExchange().getResponse().addCookie(accessTokenCookie);
                 })

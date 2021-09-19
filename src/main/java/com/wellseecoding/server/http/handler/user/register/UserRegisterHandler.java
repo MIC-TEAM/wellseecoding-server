@@ -35,7 +35,7 @@ public class UserRegisterHandler {
     }
 
     private Mono<ServerResponse> createResponse(User user) {
-        final String accessToken = accessTokenGenerator.generate(user.getId());
+        final String accessToken = accessTokenGenerator.generate(user.getId(), user.getUsername());
         final ResponseCookie accessTokenCookie = ResponseCookie.from(CookieNameRegistry.ACCESS_TOKEN, accessToken).build();
 
         final String refreshToken = user.getRefreshToken();

@@ -18,13 +18,14 @@ public class AccessTokenGenerator {
     private final String issuer;
     private final Duration timeout;
 
-    public String generate(long userId) {
+    public String generate(long userId, String name) {
         try {
             JWTClaimsSet claimsSet = new JWTClaimsSet
                     .Builder()
                     .issuer(issuer)
                     .expirationTime(Date.from(Instant.now().plus(timeout)))
                     .subject(String.valueOf(userId))
+                    .claim(PrivateTokenNameRegistry.USER_NAME, name)
                     .build();
             SignedJWT signedJWT = new SignedJWT(jwsHeader, claimsSet);
             signedJWT.sign(jwsSigner);
