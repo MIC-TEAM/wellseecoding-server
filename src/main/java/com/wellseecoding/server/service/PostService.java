@@ -36,12 +36,12 @@ public class PostService {
                                                 .size(postRequest.getSize())
                                                 .build());
 
-            replaceTagsForPost(post.getId(), postRequest.getTags());
+            replaceTagsForPost(post, postRequest.getTags());
             return null;
         });
     }
 
-    private void replaceTagsForPost(long postId, List<String> tagValues) {
+    private void replaceTagsForPost(Post post, List<String> tagValues) {
         List<Tag> tags = new ArrayList<>();
         tagValues.forEach(tagValue -> {
             Optional<Tag> optionalTag = tagRepository.findByValue(tagValue);
@@ -56,7 +56,7 @@ public class PostService {
         tags.forEach(tag -> {
             tagPostMapRepository.save(TagPostMap.builder()
                                                 .tag(tag)
-                                                .postId(postId)
+                                                .post(post)
                                                 .build());
         });
     }
@@ -112,7 +112,7 @@ public class PostService {
             tagPostMapRepository.findAllByPostId(postId)
                                 .forEach(tagPostMapRepository::delete);
 
-            replaceTagsForPost(postId, postRequest.getTags());
+            replaceTagsForPost(post, postRequest.getTags());
             return null;
         });
     }

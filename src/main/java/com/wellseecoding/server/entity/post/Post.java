@@ -27,8 +27,7 @@ public class Post {
     private String qualification;
     private String size;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "post_id")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "post", cascade = CascadeType.REMOVE)
     @Builder.Default
     private Set<TagPostMap> tagPostMaps = new HashSet<>();
 }
