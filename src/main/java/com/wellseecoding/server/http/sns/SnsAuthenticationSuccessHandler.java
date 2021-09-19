@@ -5,7 +5,7 @@ import com.wellseecoding.server.http.token.AccessTokenGenerator;
 import com.wellseecoding.server.infra.sns.SnsUserInfo;
 import com.wellseecoding.server.infra.sns.SnsUserInfoResolver;
 import com.wellseecoding.server.service.UserService;
-import com.wellseecoding.server.user.sns.SnsInfo;
+import com.wellseecoding.server.entity.sns.SnsInfo;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;

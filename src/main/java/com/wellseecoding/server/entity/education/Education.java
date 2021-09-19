@@ -1,4 +1,4 @@
-package com.wellseecoding.server.user.work;
+package com.wellseecoding.server.entity.education;
 
 import lombok.*;
 
@@ -10,14 +10,14 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "work")
-public class Work {
+@Table(name = "education")
+public class Education {
     @Id
     @GeneratedValue
     private Long id;
     @Column(name = "user_id")
     private Long userId;
-    private String role;
-    private String technology;
-    private Long years;
+    private String degree;
+    private String major;
+    private boolean graduated;
 }

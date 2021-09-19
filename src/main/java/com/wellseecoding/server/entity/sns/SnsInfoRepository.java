@@ -1,4 +1,4 @@
-package com.wellseecoding.server.user.sns;
+package com.wellseecoding.server.entity.sns;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

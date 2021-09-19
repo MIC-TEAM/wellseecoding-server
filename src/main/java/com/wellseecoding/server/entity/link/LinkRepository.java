@@ -1,4 +1,4 @@
-package com.wellseecoding.server.user.link;
+package com.wellseecoding.server.entity.link;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

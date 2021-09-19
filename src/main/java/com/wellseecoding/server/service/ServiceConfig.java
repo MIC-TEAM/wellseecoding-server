@@ -1,12 +1,12 @@
 package com.wellseecoding.server.service;
 
 import com.google.common.hash.Hashing;
-import com.wellseecoding.server.post.PostRepository;
-import com.wellseecoding.server.user.UserRepository;
-import com.wellseecoding.server.user.education.EducationRepository;
-import com.wellseecoding.server.user.link.LinkRepository;
-import com.wellseecoding.server.user.sns.SnsInfoRepository;
-import com.wellseecoding.server.user.work.WorkRepository;
+import com.wellseecoding.server.entity.post.PostRepository;
+import com.wellseecoding.server.entity.user.UserRepository;
+import com.wellseecoding.server.entity.education.EducationRepository;
+import com.wellseecoding.server.entity.link.LinkRepository;
+import com.wellseecoding.server.entity.sns.SnsInfoRepository;
+import com.wellseecoding.server.entity.work.WorkRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

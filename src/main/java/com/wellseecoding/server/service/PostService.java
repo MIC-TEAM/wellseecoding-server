@@ -1,8 +1,8 @@
 package com.wellseecoding.server.service;
 
 import com.wellseecoding.server.http.handler.post.PostRequest;
-import com.wellseecoding.server.post.Post;
-import com.wellseecoding.server.post.PostRepository;
+import com.wellseecoding.server.entity.post.Post;
+import com.wellseecoding.server.entity.post.PostRepository;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 

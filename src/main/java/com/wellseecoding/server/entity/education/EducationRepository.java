@@ -1,4 +1,4 @@
-package com.wellseecoding.server.user.education;
+package com.wellseecoding.server.entity.education;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -4,7 +4,7 @@ import com.wellseecoding.server.http.CookieNameRegistry;
 import com.wellseecoding.server.http.handler.OperationResult;
 import com.wellseecoding.server.http.token.AccessTokenGenerator;
 import com.wellseecoding.server.service.UserService;
-import com.wellseecoding.server.user.User;
+import com.wellseecoding.server.entity.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;

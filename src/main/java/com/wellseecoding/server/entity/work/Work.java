@@ -1,4 +1,4 @@
-package com.wellseecoding.server.user.link;
+package com.wellseecoding.server.entity.work;
 
 import lombok.*;
 
@@ -10,14 +10,14 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "link")
-public class Link {
+@Table(name = "work")
+public class Work {
     @Id
     @GeneratedValue
     private Long id;
     @Column(name = "user_id")
     private Long userId;
-    private String name;
-    private String link;
-    private String description;
+    private String role;
+    private String technology;
+    private Long years;
 }

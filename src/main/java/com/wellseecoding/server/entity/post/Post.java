@@ -1,4 +1,4 @@
-package com.wellseecoding.server.post;
+package com.wellseecoding.server.entity.post;
 
 import lombok.*;
 
