@@ -1,5 +1,6 @@
 package com.wellseecoding.server.entity.tag;
 
+import com.wellseecoding.server.entity.post.Post;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,6 +21,7 @@ public class TagPostMap {
     @JoinColumn(name = "tag_id")
     private Tag tag;
 
-    @Column(name = "post_id")
-    private Long postId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "post_id")
+    private Post post;
 }
