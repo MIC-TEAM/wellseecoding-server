@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,5 +27,5 @@ public class PostRequest {
     @Builder.Default
     private final String size = StringUtils.EMPTY;
     @Builder.Default
-    private final String tags = StringUtils.EMPTY;
+    private final List<String > tags = new ArrayList<>();
 }

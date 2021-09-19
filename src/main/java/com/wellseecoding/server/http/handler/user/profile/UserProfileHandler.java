@@ -6,7 +6,7 @@ import com.wellseecoding.server.http.handler.user.profile.model.Link;
 import com.wellseecoding.server.http.handler.user.profile.model.Profile;
 import com.wellseecoding.server.http.handler.user.profile.model.Work;
 import com.wellseecoding.server.service.UserService;
-import com.wellseecoding.server.user.User;
+import com.wellseecoding.server.entity.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;

@@ -1,6 +1,6 @@
-package com.wellseecoding.server.user.sns;
+package com.wellseecoding.server.entity.sns;
 
-import com.wellseecoding.server.user.User;
+import com.wellseecoding.server.entity.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

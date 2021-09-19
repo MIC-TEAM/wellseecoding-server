@@ -72,3 +72,35 @@ CREATE TABLE `posts`
     INDEX           `idx1_user_id` (`user_id`),
     CONSTRAINT `posts_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 );
+
+CREATE TABLE `tags`
+(
+    `id`    INT         NOT NULL AUTO_INCREMENT,
+    `value` varchar(32) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE `idx1_value` (`value`)
+);
+
+CREATE TABLE `tag_post_map`
+(
+    `id`      INT NOT NULL AUTO_INCREMENT,
+    `tag_id`  INT NOT NULL,
+    `post_id` INT NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX     `idx1_tag_id` (`tag_id`),
+    INDEX     `idx1_post_id` (`post_id`),
+    CONSTRAINT `tag_post_map_tag_id` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`),
+    CONSTRAINT `tag_post_map_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`)
+);
+
+CREATE TABLE `tag_user_map`
+(
+    `id`      INT NOT NULL AUTO_INCREMENT,
+    `tag_id`  INT NOT NULL,
+    `user_id` INT NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX     `idx1_tag_id` (`tag_id`),
+    INDEX     `idx1_user_id` (`user_id`),
+    CONSTRAINT `tag_user_map_tag_id` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`),
+    CONSTRAINT `tag_user_map_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+);

@@ -4,14 +4,14 @@ import com.google.common.hash.HashFunction;
 import com.wellseecoding.server.http.handler.user.profile.model.Education;
 import com.wellseecoding.server.http.handler.user.profile.model.Link;
 import com.wellseecoding.server.http.handler.user.profile.model.Work;
-import com.wellseecoding.server.user.User;
-import com.wellseecoding.server.user.UserRepository;
-import com.wellseecoding.server.user.education.EducationRepository;
-import com.wellseecoding.server.user.link.LinkRepository;
-import com.wellseecoding.server.user.sns.SnsInfo;
-import com.wellseecoding.server.user.sns.SnsInfoKey;
-import com.wellseecoding.server.user.sns.SnsInfoRepository;
-import com.wellseecoding.server.user.work.WorkRepository;
+import com.wellseecoding.server.entity.user.User;
+import com.wellseecoding.server.entity.user.UserRepository;
+import com.wellseecoding.server.entity.education.EducationRepository;
+import com.wellseecoding.server.entity.link.LinkRepository;
+import com.wellseecoding.server.entity.sns.SnsInfo;
+import com.wellseecoding.server.entity.sns.SnsInfoKey;
+import com.wellseecoding.server.entity.sns.SnsInfoRepository;
+import com.wellseecoding.server.entity.work.WorkRepository;
 import lombok.AllArgsConstructor;
 
 import java.nio.charset.StandardCharsets;
@@ -56,7 +56,7 @@ public class UserService {
         return CompletableFuture.supplyAsync(() -> {
             educationRepository.findByUserId(userId).forEach(educationRepository::delete);
             for (Education education : educations) {
-                com.wellseecoding.server.user.education.Education educationEntity = new com.wellseecoding.server.user.education.Education();
+                com.wellseecoding.server.entity.education.Education educationEntity = new com.wellseecoding.server.entity.education.Education();
                 educationEntity.setUserId(userId);
                 educationEntity.setDegree(education.getDegree());
                 educationEntity.setMajor(education.getMajor());
@@ -71,7 +71,7 @@ public class UserService {
         return CompletableFuture.supplyAsync(() -> {
             linkRepository.findByUserId(userId).forEach(linkRepository::delete);
             for (Link link : links) {
-                com.wellseecoding.server.user.link.Link linkEntity = new com.wellseecoding.server.user.link.Link();
+                com.wellseecoding.server.entity.link.Link linkEntity = new com.wellseecoding.server.entity.link.Link();
                 linkEntity.setUserId(userId);
                 linkEntity.setName(link.getName());
                 linkEntity.setLink(link.getLink());
@@ -86,7 +86,7 @@ public class UserService {
         return CompletableFuture.supplyAsync(() -> {
             workRepository.findByUserId(userId).forEach(workRepository::delete);
             for (Work work : works) {
-                com.wellseecoding.server.user.work.Work workEntity = new com.wellseecoding.server.user.work.Work();
+                com.wellseecoding.server.entity.work.Work workEntity = new com.wellseecoding.server.entity.work.Work();
                 workEntity.setUserId(userId);
                 workEntity.setRole(work.getRole());
                 workEntity.setTechnology(work.getTechnology());

@@ -1,8 +1,8 @@
-package com.wellseecoding.server.user;
+package com.wellseecoding.server.entity.user;
 
-import com.wellseecoding.server.user.education.Education;
-import com.wellseecoding.server.user.link.Link;
-import com.wellseecoding.server.user.work.Work;
+import com.wellseecoding.server.entity.education.Education;
+import com.wellseecoding.server.entity.link.Link;
+import com.wellseecoding.server.entity.work.Work;
 import lombok.*;
 
 import javax.persistence.*;

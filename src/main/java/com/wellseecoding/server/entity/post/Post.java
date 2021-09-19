@@ -1,8 +1,11 @@
-package com.wellseecoding.server.post;
+package com.wellseecoding.server.entity.post;
 
+import com.wellseecoding.server.entity.tag.TagPostMap;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -23,4 +26,9 @@ public class Post {
     private String summary;
     private String qualification;
     private String size;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "post_id")
+    @Builder.Default
+    private Set<TagPostMap> tagPostMaps = new HashSet<>();
 }
