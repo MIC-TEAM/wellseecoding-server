@@ -26,7 +26,7 @@ public class PostHandler {
     }
 
     public Mono<ServerResponse> getAll(ServerRequest serverRequest) {
-        return Mono.fromFuture(postService.findAll())
+        return Mono.fromFuture(postService.getRandomPosts())
                    .flatMap(posts -> ServerResponse.ok().body(BodyInserters.fromValue(posts)));
     }
 
