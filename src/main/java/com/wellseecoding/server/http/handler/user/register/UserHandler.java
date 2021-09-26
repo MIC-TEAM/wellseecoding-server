@@ -1,35 +1,37 @@
 package com.wellseecoding.server.http.handler.user.register;
 
 import com.wellseecoding.server.http.CookieNameRegistry;
-import com.wellseecoding.server.http.handler.OperationResult;
 import com.wellseecoding.server.http.token.AccessTokenGenerator;
 import com.wellseecoding.server.service.UserService;
 import com.wellseecoding.server.entity.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
 @AllArgsConstructor
 @Component
-public class UserRegisterHandler {
-    private static final OperationResult SUCCESS_RESULT = OperationResult.builder()
-                                                                         .success(true)
-                                                                         .description("user has been added")
-                                                                         .build();
-
+public class UserHandler {
     private final AccessTokenGenerator accessTokenGenerator;
     private final UserService userService;
 
-    public Mono<ServerResponse> handle(ServerRequest request) {
+    public Mono<ServerResponse> handleRegister(ServerRequest request) {
         return request.bodyToMono(UserRegisterRequest.class)
                       .flatMap(userRegisterRequest -> {
                           return Mono.fromFuture(userService.createUser(userRegisterRequest.getUsername(),
                                                                         userRegisterRequest.getPassword(),
                                                                         userRegisterRequest.getEmail()));
+                      })
+                      .flatMap(this::createResponse);
+    }
+
+    public Mono<ServerResponse> handleLogin(ServerRequest request) {
+        return request.bodyToMono(UserLoginRequest.class)
+                      .flatMap(userRegisterRequest -> {
+                          return Mono.fromFuture(userService.login(userRegisterRequest.getEmail(),
+                                                                   userRegisterRequest.getPassword()));
                       })
                       .flatMap(this::createResponse);
     }
@@ -46,6 +48,6 @@ public class UserRegisterHandler {
         return ServerResponse.ok()
                              .cookie(accessTokenCookie)
                              .cookie(refreshTokenCookie)
-                             .body(BodyInserters.fromValue(SUCCESS_RESULT));
+                             .build();
     }
 }

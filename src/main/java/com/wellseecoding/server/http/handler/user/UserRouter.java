@@ -2,7 +2,7 @@ package com.wellseecoding.server.http.handler.user;
 
 import com.wellseecoding.server.http.filter.UserIdExtractor;
 import com.wellseecoding.server.http.handler.user.profile.UserProfileHandler;
-import com.wellseecoding.server.http.handler.user.register.UserRegisterHandler;
+import com.wellseecoding.server.http.handler.user.register.UserHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -15,7 +15,7 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 @Configuration
 public class UserRouter {
     @Bean
-    public RouterFunction<ServerResponse> routeUserRequests(UserRegisterHandler userRegisterHandler, UserProfileHandler userProfileHandler) {
+    public RouterFunction<ServerResponse> routeUserRequests(UserHandler userHandler, UserProfileHandler userProfileHandler) {
         return RouterFunctions.route().path("/api/v1/users", builder -> {
             builder.path("/profile", profileBuilder -> {
                 profileBuilder.PUT("/status", contentType(MediaType.APPLICATION_JSON), userProfileHandler::setStatus)
@@ -25,7 +25,9 @@ public class UserRouter {
                               .PUT("/links", contentType(MediaType.APPLICATION_JSON), userProfileHandler::setLinks)
                               .GET("", userProfileHandler::get)
                               .filter(new UserIdExtractor());
-            }).POST(contentType(MediaType.APPLICATION_JSON), userRegisterHandler::handle);
+            }).path("/token", loginBuilder -> {
+                loginBuilder.POST("", contentType(MediaType.APPLICATION_JSON), userHandler::handleLogin);
+            }).POST(contentType(MediaType.APPLICATION_JSON), userHandler::handleRegister);
         }).build();
     }
 }
