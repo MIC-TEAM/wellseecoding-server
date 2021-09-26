@@ -7,6 +7,7 @@ import com.wellseecoding.server.entity.tag.TagRepository;
 import com.wellseecoding.server.http.handler.post.PostRequest;
 import com.wellseecoding.server.entity.post.Post;
 import com.wellseecoding.server.entity.post.PostRepository;
+import com.wellseecoding.server.service.model.ThemedPost;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -88,6 +89,13 @@ public class PostService {
                 throw new IllegalArgumentException("post " + postId + " does not belong to user " + userId);
             }
             postRepository.delete(post);
+            post.getTagPostMaps().forEach(tagPostMap -> {
+                Tag tag = tagPostMap.getTag();
+                if (tagPostMapRepository.countByTag(tag) > 0) {
+                    return;
+                }
+                tagRepository.delete(tag);
+            });
             return null;
         });
     }
@@ -114,6 +122,24 @@ public class PostService {
 
             replaceTagsForPost(post, postRequest.getTags());
             return null;
+        });
+    }
+
+    public CompletableFuture<List<ThemedPost>> getRandomPosts() {
+        return CompletableFuture.supplyAsync(() -> {
+            List<ThemedPost> themedPosts = new ArrayList<>();
+            List<Tag> randomTags = tagRepository.getRandomTags(3);
+            randomTags.forEach(randomTag -> {
+                List<TagPostMap> posts = tagPostMapRepository.findFirst10ByTag(randomTag);
+                if (posts.isEmpty()) {
+                    return;
+                }
+                themedPosts.add(new ThemedPost(randomTag.getValue(),
+                                               posts.stream().map(tagPostMap -> {
+                                                   return com.wellseecoding.server.service.model.Post.fromEntity(tagPostMap.getPost());
+                                               }).collect(Collectors.toList())));
+            });
+            return themedPosts;
         });
     }
 }
