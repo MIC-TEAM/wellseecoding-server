@@ -97,6 +97,17 @@ public class UserService {
         });
     }
 
+    public CompletableFuture<User> login(String email, String password) {
+        return CompletableFuture.supplyAsync(() -> {
+            final String hashedPassword = passwordHashFunction.hashString(password, StandardCharsets.UTF_8).toString();
+            Optional<User> user = userRepository.findByEmailAndPassword(email, hashedPassword);
+            if (user.isEmpty()) {
+                throw new UserNotFoundException(email + " is not found");
+            }
+            return user.get();
+        });
+    }
+
     public CompletableFuture<User> createUser(String username, String password, String email) {
         return createUser(User.builder()
                               .username(username)
