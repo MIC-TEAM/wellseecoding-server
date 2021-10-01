@@ -104,3 +104,14 @@ CREATE TABLE `tag_user_map`
     CONSTRAINT `tag_user_map_tag_id` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`),
     CONSTRAINT `tag_user_map_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 );
+
+CREATE TABLE `keyword_post_map`
+(
+    `id`      INT         NOT NULL AUTO_INCREMENT,
+    `keyword` varchar(64) NOT NULL,
+    `post_id` INT         NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX     `idx1_keyword_id` (`id`),
+    INDEX     `idx1_post_id` (`post_id`),
+    CONSTRAINT `keyword_post_map_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`)
+);
