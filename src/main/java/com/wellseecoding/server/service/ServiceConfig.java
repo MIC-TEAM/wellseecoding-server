@@ -1,6 +1,7 @@
 package com.wellseecoding.server.service;
 
 import com.google.common.hash.Hashing;
+import com.wellseecoding.server.entity.post.KeywordPostMapRepository;
 import com.wellseecoding.server.entity.post.PostRepository;
 import com.wellseecoding.server.entity.tag.TagPostMapRepository;
 import com.wellseecoding.server.entity.tag.TagRepository;
@@ -35,9 +36,11 @@ public class ServiceConfig {
     @Bean
     public PostService postService(PostRepository postRepository,
                                    TagRepository tagRepository,
-                                   TagPostMapRepository tagPostMapRepository) {
+                                   TagPostMapRepository tagPostMapRepository,
+                                   KeywordPostMapRepository keywordPostMapRepository) {
         return new PostService(postRepository,
                                tagRepository,
-                               tagPostMapRepository);
+                               tagPostMapRepository,
+                               keywordPostMapRepository);
     }
 }
