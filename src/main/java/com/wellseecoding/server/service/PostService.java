@@ -1,5 +1,7 @@
 package com.wellseecoding.server.service;
 
+import com.wellseecoding.server.entity.post.KeywordPostMap;
+import com.wellseecoding.server.entity.post.KeywordPostMapRepository;
 import com.wellseecoding.server.entity.tag.Tag;
 import com.wellseecoding.server.entity.tag.TagPostMap;
 import com.wellseecoding.server.entity.tag.TagPostMapRepository;
@@ -10,11 +12,9 @@ import com.wellseecoding.server.entity.post.PostRepository;
 import com.wellseecoding.server.service.model.ThemedPost;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -24,6 +24,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final TagPostMapRepository tagPostMapRepository;
+    private final KeywordPostMapRepository keywordPostMapRepository;
 
     public CompletableFuture<Void> write(Long userId, PostRequest postRequest) {
         return CompletableFuture.supplyAsync(() -> {
@@ -38,6 +39,7 @@ public class PostService {
                                                 .build());
 
             replaceTagsForPost(post, postRequest.getTags());
+            remapKeywordAndPost(post, postRequest.getTags());
             return null;
         });
     }
@@ -121,6 +123,7 @@ public class PostService {
                                 .forEach(tagPostMapRepository::delete);
 
             replaceTagsForPost(post, postRequest.getTags());
+            remapKeywordAndPost(post, postRequest.getTags());
             return null;
         });
     }
@@ -140,6 +143,46 @@ public class PostService {
                                                }).collect(Collectors.toList())));
             });
             return themedPosts;
+        });
+    }
+
+    private void remapKeywordAndPost(Post post, List<String> tags) {
+        removeKeywordAndPostMap(post.getId());
+        mapKeywordAndPost(post, tags);
+    }
+
+    private void removeKeywordAndPostMap(Long postId) {
+        keywordPostMapRepository.findAllByPostId(postId)
+                                .forEach(keywordPostMapRepository::delete);
+    }
+
+    private void mapKeywordAndPost(Post post, List<String> tags) {
+        Set<String> keywords = new HashSet<>();
+        keywords.addAll(Arrays.asList(StringUtils.split(post.getName(), " ")));
+        keywords.addAll(Arrays.asList(StringUtils.split(post.getSummary(), " ")));
+        keywords.addAll(tags);
+        keywords.forEach(keyword -> {
+            keywordPostMapRepository.save(KeywordPostMap.builder()
+                                                        .keyword(keyword)
+                                                        .post(post)
+                                                        .build());
+        });
+    }
+
+    public CompletableFuture<List<com.wellseecoding.server.service.model.Post>> searchPosts(List<String> keywords) {
+        return CompletableFuture.supplyAsync(() -> {
+            Map<Long, com.wellseecoding.server.service.model.Post> posts = new HashMap<>();
+            keywords.forEach(keyword -> {
+                keywordPostMapRepository.search(keyword)
+                                        .forEach(keywordPostMap -> {
+                                            final Post postEntity = keywordPostMap.getPost();
+                                            final Long postId = postEntity.getId();
+                                            if (posts.containsKey(postId) == false) {
+                                                posts.put(postId, com.wellseecoding.server.service.model.Post.fromEntity(postEntity));
+                                            }
+                                        });
+            });
+            return new ArrayList<>(posts.values());
         });
     }
 }

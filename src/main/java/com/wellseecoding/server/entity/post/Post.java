@@ -30,4 +30,8 @@ public class Post {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "post", cascade = CascadeType.REMOVE)
     @Builder.Default
     private Set<TagPostMap> tagPostMaps = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "post", cascade = CascadeType.REMOVE)
+    @Builder.Default
+    private Set<KeywordPostMap> keywordPostMaps = new HashSet<>();
 }
