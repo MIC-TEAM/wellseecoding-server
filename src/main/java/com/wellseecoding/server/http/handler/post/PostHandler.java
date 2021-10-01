@@ -3,12 +3,15 @@ package com.wellseecoding.server.http.handler.post;
 import com.wellseecoding.server.http.ContextNameRegistry;
 import com.wellseecoding.server.service.PostService;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Objects.nonNull;
@@ -26,7 +29,15 @@ public class PostHandler {
     }
 
     public Mono<ServerResponse> getAll(ServerRequest serverRequest) {
-        return Mono.fromFuture(postService.getRandomPosts())
+        return Mono.just(serverRequest.queryParam("keyword"))
+                   .flatMap(input -> {
+                       if (input.isEmpty()) {
+                           return Mono.fromFuture(postService.getRandomPosts());
+                       } else {
+                           List<String> keywords = Arrays.asList(StringUtils.split(input.get(), " "));
+                           return Mono.fromFuture(postService.searchPosts(keywords));
+                       }
+                   })
                    .flatMap(posts -> ServerResponse.ok().body(BodyInserters.fromValue(posts)));
     }
 

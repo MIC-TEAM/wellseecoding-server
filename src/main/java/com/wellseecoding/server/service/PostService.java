@@ -168,4 +168,21 @@ public class PostService {
                                                         .build());
         });
     }
+
+    public CompletableFuture<List<com.wellseecoding.server.service.model.Post>> searchPosts(List<String> keywords) {
+        return CompletableFuture.supplyAsync(() -> {
+            Map<Long, com.wellseecoding.server.service.model.Post> posts = new HashMap<>();
+            keywords.forEach(keyword -> {
+                keywordPostMapRepository.search(keyword)
+                                        .forEach(keywordPostMap -> {
+                                            final Post postEntity = keywordPostMap.getPost();
+                                            final Long postId = postEntity.getId();
+                                            if (posts.containsKey(postId) == false) {
+                                                posts.put(postId, com.wellseecoding.server.service.model.Post.fromEntity(postEntity));
+                                            }
+                                        });
+            });
+            return new ArrayList<>(posts.values());
+        });
+    }
 }
