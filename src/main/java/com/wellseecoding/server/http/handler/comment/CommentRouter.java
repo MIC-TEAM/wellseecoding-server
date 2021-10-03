@@ -1,5 +1,6 @@
 package com.wellseecoding.server.http.handler.comment;
 
+import com.wellseecoding.server.http.filter.UserIdExtractor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -19,7 +20,8 @@ public class CommentRouter {
                        .path("/{commentId}", builder -> {
                            builder.PUT("", contentType(MediaType.APPLICATION_JSON), commentHandler::updateComment)
                                   .DELETE("", contentType(MediaType.APPLICATION_JSON), commentHandler::deleteComment);
-                       });
+                       })
+                       .filter(new UserIdExtractor());
         }).build();
     }
 }
