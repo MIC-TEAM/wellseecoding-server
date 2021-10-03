@@ -4,6 +4,7 @@ import com.wellseecoding.server.http.ContextNameRegistry;
 import com.wellseecoding.server.service.CommentService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -28,7 +29,10 @@ public class CommentHandler {
     }
 
     public Mono<ServerResponse> getComments(ServerRequest serverRequest) {
-        return Mono.empty();
+        return Mono.defer(() -> {
+            final long postId = Long.parseLong(serverRequest.pathVariable("postId"));
+            return Mono.fromFuture(commentService.getComments(postId));
+        }).flatMap(comments -> ServerResponse.ok().body(BodyInserters.fromValue(comments)));
     }
 
     public Mono<ServerResponse> updateComment(ServerRequest serverRequest) {
