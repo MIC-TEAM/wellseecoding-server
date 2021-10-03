@@ -1,6 +1,6 @@
 package com.wellseecoding.server.service;
 
-import com.wellseecoding.server.entity.comment.Comment;
+import com.wellseecoding.server.entity.comment.CommentEntity;
 import com.wellseecoding.server.entity.comment.CommentRepository;
 import com.wellseecoding.server.entity.post.PostRepository;
 import com.wellseecoding.server.entity.user.UserRepository;
@@ -46,14 +46,14 @@ public class CommentService {
             if (isParentMissing) {
                 throw new IllegalArgumentException("parent comment " + parentCommentId + " does not exist");
             }
-            commentRepository.save(Comment.builder()
-                                          .parentId(parentCommentId)
-                                          .postId(postId)
-                                          .userId(userId)
-                                          .date(date)
-                                          .deleted(false)
-                                          .text(text)
-                                          .build());
+            commentRepository.save(CommentEntity.builder()
+                                                .parentId(parentCommentId)
+                                                .postId(postId)
+                                                .userId(userId)
+                                                .date(date)
+                                                .deleted(false)
+                                                .text(text)
+                                                .build());
             return null;
         });
     }
