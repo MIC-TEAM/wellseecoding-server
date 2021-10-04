@@ -113,4 +113,57 @@ public class CommentService {
             return comments;
         });
     }
+
+    public CompletableFuture<Void> updateComment(long userId,
+                                                 long commentId,
+                                                 @NonNull String text) {
+        if (userId < 0) {
+            return CompletableFuture.failedFuture(new IllegalArgumentException(userId + " is illegal user id"));
+        }
+        if (commentId < 0) {
+            return CompletableFuture.failedFuture(new IllegalArgumentException(commentId + " is illegal comment id"));
+        }
+        if (StringUtils.isBlank(text)) {
+            return CompletableFuture.failedFuture(new IllegalArgumentException("text is blank"));
+        }
+
+        return CompletableFuture.supplyAsync(() -> {
+            final Optional<CommentEntity> commentEntity = commentRepository.findById(commentId);
+            if (commentEntity.isEmpty()) {
+                throw new IllegalArgumentException("comment " + commentId + " does not exist");
+            }
+
+            if (Objects.equals(userId, commentEntity.get().getUserId()) == false) {
+                throw new IllegalArgumentException("user " + userId + " is not the owner of the post");
+            }
+
+            commentEntity.get().setText(text);
+            commentRepository.save(commentEntity.get());
+            return null;
+        });
+    }
+
+    public CompletableFuture<Void> deleteComment(long userId, long commentId) {
+        if (userId < 0) {
+            return CompletableFuture.failedFuture(new IllegalArgumentException(userId + " is illegal user id"));
+        }
+        if (commentId < 0) {
+            return CompletableFuture.failedFuture(new IllegalArgumentException(commentId + " is illegal comment id"));
+        }
+
+        return CompletableFuture.supplyAsync(() -> {
+            final Optional<CommentEntity> commentEntity = commentRepository.findById(commentId);
+            if (commentEntity.isEmpty()) {
+                throw new IllegalArgumentException("comment " + commentId + " does not exist");
+            }
+
+            if (Objects.equals(userId, commentEntity.get().getUserId()) == false) {
+                throw new IllegalArgumentException("user " + userId + " is not the owner of the post");
+            }
+
+            commentEntity.get().setDeleted(true);
+            commentRepository.save(commentEntity.get());
+            return null;
+        });
+    }
 }
