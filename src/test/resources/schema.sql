@@ -115,3 +115,19 @@ CREATE TABLE `keyword_post_map`
     INDEX     `idx1_post_id` (`post_id`),
     CONSTRAINT `keyword_post_map_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`)
 );
+
+CREATE TABLE `comments`
+(
+    `id`        INT          NOT NULL AUTO_INCREMENT,
+    `parent_id` INT NULL,
+    `post_id`   INT          NOT NULL,
+    `user_id`   INT          NOT NULL,
+    `date`      INT          NOT NULL,
+    `deleted`   BIT          NOT NULL,
+    `text`      varchar(512) NOT NULL,
+    PRIMARY KEY (`id`),
+    KEY         `parent_id_idex` (`parent_id`),
+    KEY         `post_id_index` (`post_id`),
+    KEY         `user_id_index` (`user_id`),
+    CONSTRAINT `comment_user_map` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+);
