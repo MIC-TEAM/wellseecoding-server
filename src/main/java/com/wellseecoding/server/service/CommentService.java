@@ -93,7 +93,8 @@ public class CommentService {
                                                                            .userName(userMap.get(childEntity.getUserId()).getUsername())
                                                                            .commentId(childEntity.getId())
                                                                            .commentDate(childEntity.getDate())
-                                                                           .text(childEntity.getText())
+                                                                           .text(childEntity.isDeleted() ?  StringUtils.EMPTY : childEntity.getText())
+                                                                           .deleted(childEntity.isDeleted())
                                                                            .children(Collections.emptyList())
                                                                            .build());
                                               });
@@ -103,12 +104,66 @@ public class CommentService {
                                                    .userName(userMap.get(parentEntity.getUserId()).getUsername())
                                                    .commentId(parentEntity.getId())
                                                    .commentDate(parentEntity.getDate())
-                                                   .text(parentEntity.getText())
+                                                   .text(parentEntity.isDeleted() ? StringUtils.EMPTY : parentEntity.getText())
+                                                   .deleted(parentEntity.isDeleted())
                                                    .children(childComments)
                                                    .build());
                            });
 
             return comments;
+        });
+    }
+
+    public CompletableFuture<Void> updateComment(long userId,
+                                                 long commentId,
+                                                 @NonNull String text) {
+        if (userId < 0) {
+            return CompletableFuture.failedFuture(new IllegalArgumentException(userId + " is illegal user id"));
+        }
+        if (commentId < 0) {
+            return CompletableFuture.failedFuture(new IllegalArgumentException(commentId + " is illegal comment id"));
+        }
+        if (StringUtils.isBlank(text)) {
+            return CompletableFuture.failedFuture(new IllegalArgumentException("text is blank"));
+        }
+
+        return CompletableFuture.supplyAsync(() -> {
+            final Optional<CommentEntity> commentEntity = commentRepository.findById(commentId);
+            if (commentEntity.isEmpty()) {
+                throw new IllegalArgumentException("comment " + commentId + " does not exist");
+            }
+
+            if (Objects.equals(userId, commentEntity.get().getUserId()) == false) {
+                throw new IllegalArgumentException("user " + userId + " is not the owner of the post");
+            }
+
+            commentEntity.get().setText(text);
+            commentRepository.save(commentEntity.get());
+            return null;
+        });
+    }
+
+    public CompletableFuture<Void> deleteComment(long userId, long commentId) {
+        if (userId < 0) {
+            return CompletableFuture.failedFuture(new IllegalArgumentException(userId + " is illegal user id"));
+        }
+        if (commentId < 0) {
+            return CompletableFuture.failedFuture(new IllegalArgumentException(commentId + " is illegal comment id"));
+        }
+
+        return CompletableFuture.supplyAsync(() -> {
+            final Optional<CommentEntity> commentEntity = commentRepository.findById(commentId);
+            if (commentEntity.isEmpty()) {
+                throw new IllegalArgumentException("comment " + commentId + " does not exist");
+            }
+
+            if (Objects.equals(userId, commentEntity.get().getUserId()) == false) {
+                throw new IllegalArgumentException("user " + userId + " is not the owner of the post");
+            }
+
+            commentEntity.get().setDeleted(true);
+            commentRepository.save(commentEntity.get());
+            return null;
         });
     }
 }

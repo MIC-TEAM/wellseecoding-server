@@ -36,10 +36,26 @@ public class CommentHandler {
     }
 
     public Mono<ServerResponse> updateComment(ServerRequest serverRequest) {
-        return Mono.empty();
+        return Mono.deferContextual(contextView -> {
+            long userId = contextView.get(ContextNameRegistry.USER_ID);
+            return Mono.just(userId);
+        }).zipWith(serverRequest.bodyToMono(CommentRequest.class)).flatMap(tuple -> {
+            final long userId = tuple.getT1();
+            final CommentRequest commentRequest = tuple.getT2();
+            final long commentId = Long.parseLong(serverRequest.pathVariable("commentId"));
+            return Mono.fromFuture(commentService.updateComment(userId,
+                                                                commentId,
+                                                                commentRequest.getText()));
+        }).then(ServerResponse.ok().build());
     }
 
     public Mono<ServerResponse> deleteComment(ServerRequest serverRequest) {
-        return Mono.empty();
+        return Mono.deferContextual(contextView -> {
+            long userId = contextView.get(ContextNameRegistry.USER_ID);
+            return Mono.just(userId);
+        }).flatMap(userId -> {
+            final long commentId = Long.parseLong(serverRequest.pathVariable("commentId"));
+            return Mono.fromFuture(commentService.deleteComment(userId, commentId));
+        }).then(ServerResponse.ok().build());
     }
 }

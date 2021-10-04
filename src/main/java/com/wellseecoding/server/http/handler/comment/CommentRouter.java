@@ -19,7 +19,7 @@ public class CommentRouter {
                        .POST("", contentType(MediaType.APPLICATION_JSON), commentHandler::addComment)
                        .path("/{commentId}", builder -> {
                            builder.PUT("", contentType(MediaType.APPLICATION_JSON), commentHandler::updateComment)
-                                  .DELETE("", contentType(MediaType.APPLICATION_JSON), commentHandler::deleteComment);
+                                  .DELETE("", commentHandler::deleteComment);
                        })
                        .filter(new UserIdExtractor());
         }).build();
