@@ -93,7 +93,8 @@ public class CommentService {
                                                                            .userName(userMap.get(childEntity.getUserId()).getUsername())
                                                                            .commentId(childEntity.getId())
                                                                            .commentDate(childEntity.getDate())
-                                                                           .text(childEntity.getText())
+                                                                           .text(childEntity.isDeleted() ?  StringUtils.EMPTY : childEntity.getText())
+                                                                           .deleted(childEntity.isDeleted())
                                                                            .children(Collections.emptyList())
                                                                            .build());
                                               });
@@ -103,7 +104,8 @@ public class CommentService {
                                                    .userName(userMap.get(parentEntity.getUserId()).getUsername())
                                                    .commentId(parentEntity.getId())
                                                    .commentDate(parentEntity.getDate())
-                                                   .text(parentEntity.getText())
+                                                   .text(parentEntity.isDeleted() ? StringUtils.EMPTY : parentEntity.getText())
+                                                   .deleted(parentEntity.isDeleted())
                                                    .children(childComments)
                                                    .build());
                            });
