@@ -18,8 +18,9 @@ public class Post {
     private String qualification;
     private String size;
     private List<String> tags;
+    private Long commentCount;
 
-    public static Post fromEntity(com.wellseecoding.server.entity.post.Post entity) {
+    public static Post fromEntity(com.wellseecoding.server.entity.post.Post entity, long commentCount) {
         return new Post(
                 entity.getId(),
                 entity.getUserId(),
@@ -32,7 +33,8 @@ public class Post {
                 entity.getTagPostMaps()
                       .stream()
                       .map(tagPostMap -> tagPostMap.getTag().getValue())
-                      .collect(Collectors.toList())
+                      .collect(Collectors.toList()),
+                commentCount
         );
     }
 }
