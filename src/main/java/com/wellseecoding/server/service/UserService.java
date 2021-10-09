@@ -1,6 +1,9 @@
 package com.wellseecoding.server.service;
 
 import com.google.common.hash.HashFunction;
+import com.wellseecoding.server.entity.likes.Like;
+import com.wellseecoding.server.entity.likes.LikeId;
+import com.wellseecoding.server.entity.likes.LikeRepository;
 import com.wellseecoding.server.http.handler.user.profile.model.Education;
 import com.wellseecoding.server.http.handler.user.profile.model.Link;
 import com.wellseecoding.server.http.handler.user.profile.model.Work;
@@ -19,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.nonNull;
 
@@ -31,6 +35,7 @@ public class UserService {
     private final SnsInfoRepository snsInfoRepository;
     private final HashFunction passwordHashFunction;
     private final Supplier<String> randomStringGenerator;
+    private final LikeRepository likeRepository;
 
     public CompletableFuture<User> getUser(long userId) {
         return CompletableFuture.supplyAsync(() -> userRepository.findById(userId)).thenApply(optionalUser -> optionalUser.get());
@@ -184,5 +189,47 @@ public class UserService {
                                                                                                 .snsType(snsType)
                                                                                                 .build())
                                                                                  .build()));
+    }
+
+    public CompletableFuture<List<Long>> getLikes(Long userId) {
+        return CompletableFuture.supplyAsync(() -> {
+            List<Like> likes = likeRepository.findAllByLikeIdUserId(userId);
+            return likes.stream()
+                        .map(like -> like.getLikeId().getPostId())
+                        .collect(Collectors.toList());
+        });
+    }
+
+    public CompletableFuture<Void> addLike(Long userId, Long postId) {
+        return CompletableFuture.supplyAsync(() -> {
+            Optional<Like> like = likeRepository.findById(LikeId.builder()
+                                                                .userId(userId)
+                                                                .postId(postId)
+                                                                .build());
+            if (like.isPresent()) {
+                return null;
+            }
+            likeRepository.save(Like.builder()
+                                    .likeId(LikeId.builder()
+                                                  .userId(userId)
+                                                  .postId(postId)
+                                                  .build())
+                                    .build());
+            return null;
+        });
+    }
+
+    public CompletableFuture<Void> removeLike(Long userId, Long postId) {
+        return CompletableFuture.supplyAsync(() -> {
+            Optional<Like> like = likeRepository.findById(LikeId.builder()
+                                                                .userId(userId)
+                                                                .postId(postId)
+                                                                .build());
+            if (like.isEmpty()) {
+                return null;
+            }
+            likeRepository.delete(like.get());
+            return null;
+        });
     }
 }

@@ -2,6 +2,7 @@ package com.wellseecoding.server.service;
 
 import com.google.common.hash.Hashing;
 import com.wellseecoding.server.entity.comment.CommentRepository;
+import com.wellseecoding.server.entity.likes.LikeRepository;
 import com.wellseecoding.server.entity.post.KeywordPostMapRepository;
 import com.wellseecoding.server.entity.post.PostRepository;
 import com.wellseecoding.server.entity.tag.TagPostMapRepository;
@@ -23,14 +24,16 @@ public class ServiceConfig {
                                    EducationRepository educationRepository,
                                    LinkRepository linkRepository,
                                    WorkRepository workRepository,
-                                   SnsInfoRepository snsInfoRepository) {
+                                   SnsInfoRepository snsInfoRepository,
+                                   LikeRepository likeRepository) {
         return new UserService(
                 userRepository,
                 educationRepository,
                 linkRepository,
                 workRepository,
                 snsInfoRepository,
-                Hashing.sha512(), () -> UUID.randomUUID().toString()
+                Hashing.sha512(), () -> UUID.randomUUID().toString(),
+                likeRepository
         );
     }
 
