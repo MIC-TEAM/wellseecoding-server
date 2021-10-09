@@ -1,5 +1,6 @@
 package com.wellseecoding.server.service;
 
+import com.wellseecoding.server.entity.comment.CommentRepository;
 import com.wellseecoding.server.entity.post.KeywordPostMap;
 import com.wellseecoding.server.entity.post.KeywordPostMapRepository;
 import com.wellseecoding.server.entity.tag.Tag;
@@ -25,6 +26,7 @@ public class PostService {
     private final TagRepository tagRepository;
     private final TagPostMapRepository tagPostMapRepository;
     private final KeywordPostMapRepository keywordPostMapRepository;
+    private final CommentRepository commentRepository;
 
     public CompletableFuture<Void> write(Long userId, PostRequest postRequest) {
         return CompletableFuture.supplyAsync(() -> {
@@ -67,7 +69,10 @@ public class PostService {
     public CompletableFuture<List<com.wellseecoding.server.service.model.Post>> findAll() {
         return CompletableFuture.supplyAsync(() -> postRepository.findAll()
                                                                  .stream()
-                                                                 .map(com.wellseecoding.server.service.model.Post::fromEntity)
+                                                                 .map(post -> {
+                                                                     final long commentCount = commentRepository.countByPostId(post.getId());
+                                                                     return com.wellseecoding.server.service.model.Post.fromEntity(post, commentCount);
+                                                                 })
                                                                  .collect(Collectors.toList()));
     }
 
@@ -75,7 +80,8 @@ public class PostService {
         return CompletableFuture.supplyAsync(() -> postRepository.findById(postId))
                                 .thenApply(optionalPost -> {
                                     if (optionalPost.isPresent()) {
-                                        return com.wellseecoding.server.service.model.Post.fromEntity(optionalPost.get());
+                                        final long commentCount = commentRepository.countByPostId(optionalPost.get().getId());
+                                        return com.wellseecoding.server.service.model.Post.fromEntity(optionalPost.get(), commentCount);
                                     }
                                     return null;
                                 });
@@ -139,7 +145,8 @@ public class PostService {
                 }
                 themedPosts.add(new ThemedPost(randomTag.getValue(),
                                                posts.stream().map(tagPostMap -> {
-                                                   return com.wellseecoding.server.service.model.Post.fromEntity(tagPostMap.getPost());
+                                                   final long commentCount = commentRepository.countByPostId(tagPostMap.getPost().getId());
+                                                   return com.wellseecoding.server.service.model.Post.fromEntity(tagPostMap.getPost(), commentCount);
                                                }).collect(Collectors.toList())));
             });
             return themedPosts;
@@ -178,7 +185,8 @@ public class PostService {
                                             final Post postEntity = keywordPostMap.getPost();
                                             final Long postId = postEntity.getId();
                                             if (posts.containsKey(postId) == false) {
-                                                posts.put(postId, com.wellseecoding.server.service.model.Post.fromEntity(postEntity));
+                                                final long commentCount = commentRepository.countByPostId(postEntity.getId());
+                                                posts.put(postId, com.wellseecoding.server.service.model.Post.fromEntity(postEntity, commentCount));
                                             }
                                         });
             });
