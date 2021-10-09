@@ -131,3 +131,11 @@ CREATE TABLE `comments`
     KEY         `user_id_index` (`user_id`),
     CONSTRAINT `comment_user_map` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
 );
+
+CREATE TABLE `likes`
+(
+    `user_id` INT NOT NULL,
+    `post_id` INT NOT NULL,
+    CONSTRAINT `likes_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+    CONSTRAINT `likes_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`)
+);

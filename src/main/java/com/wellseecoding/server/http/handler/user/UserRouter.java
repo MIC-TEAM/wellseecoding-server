@@ -25,6 +25,11 @@ public class UserRouter {
                               .PUT("/links", contentType(MediaType.APPLICATION_JSON), userProfileHandler::setLinks)
                               .GET("", userProfileHandler::get)
                               .filter(new UserIdExtractor());
+            }).path("/likes", likeBuilder -> {
+                likeBuilder.GET("", userHandler::getLikes)
+                           .POST("", contentType(MediaType.APPLICATION_JSON), userHandler::addLike)
+                           .DELETE("", contentType(MediaType.APPLICATION_JSON), userHandler::removeLike)
+                           .filter(new UserIdExtractor());
             }).path("/token", loginBuilder -> {
                 loginBuilder.POST("", contentType(MediaType.APPLICATION_JSON), userHandler::handleLogin);
             }).POST(contentType(MediaType.APPLICATION_JSON), userHandler::handleRegister);

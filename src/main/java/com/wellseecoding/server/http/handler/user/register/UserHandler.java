@@ -1,5 +1,6 @@
 package com.wellseecoding.server.http.handler.user.register;
 
+import com.wellseecoding.server.http.ContextNameRegistry;
 import com.wellseecoding.server.http.CookieNameRegistry;
 import com.wellseecoding.server.http.token.AccessTokenGenerator;
 import com.wellseecoding.server.service.UserService;
@@ -7,6 +8,7 @@ import com.wellseecoding.server.entity.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -49,5 +51,34 @@ public class UserHandler {
                              .cookie(accessTokenCookie)
                              .cookie(refreshTokenCookie)
                              .build();
+    }
+
+    public Mono<ServerResponse> getLikes(ServerRequest request) {
+        return Mono.deferContextual(contextView -> Mono.just((Long) contextView.get(ContextNameRegistry.USER_ID)))
+                   .flatMap(userId -> {
+                       return Mono.fromFuture(userService.getLikes(userId).thenApply(Likes::new));
+                   }).flatMap(likes -> ServerResponse.ok().body(BodyInserters.fromValue(likes)));
+    }
+
+    public Mono<ServerResponse> addLike(ServerRequest request) {
+        return Mono.deferContextual(contextView -> Mono.just((Long) contextView.get(ContextNameRegistry.USER_ID)))
+                   .zipWith(request.bodyToMono(LikeRequest.class))
+                   .flatMap(tuple -> {
+                       final long userId = tuple.getT1();
+                       final long postId = tuple.getT2().getPostId();
+                       return Mono.fromFuture(userService.addLike(userId, postId));
+                   })
+                   .then(ServerResponse.ok().build());
+    }
+
+    public Mono<ServerResponse> removeLike(ServerRequest request) {
+        return Mono.deferContextual(contextView -> Mono.just((Long) contextView.get(ContextNameRegistry.USER_ID)))
+                   .zipWith(request.bodyToMono(LikeRequest.class))
+                   .flatMap(tuple -> {
+                       final long userId = tuple.getT1();
+                       final long postId = tuple.getT2().getPostId();
+                       return Mono.fromFuture(userService.removeLike(userId, postId));
+                   })
+                   .then(ServerResponse.ok().build());
     }
 }
