@@ -1,5 +1,6 @@
 package com.wellseecoding.server.entity.post;
 
+import com.wellseecoding.server.entity.group.Member;
 import com.wellseecoding.server.entity.tag.TagPostMap;
 import lombok.*;
 
@@ -34,4 +35,8 @@ public class Post {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "post", cascade = CascadeType.REMOVE)
     @Builder.Default
     private Set<KeywordPostMap> keywordPostMaps = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "post", cascade = CascadeType.REMOVE)
+    @Builder.Default
+    private Set<Member> members = new HashSet<>();
 }

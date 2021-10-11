@@ -2,6 +2,7 @@ package com.wellseecoding.server.service;
 
 import com.google.common.hash.Hashing;
 import com.wellseecoding.server.entity.comment.CommentRepository;
+import com.wellseecoding.server.entity.group.MemberRepository;
 import com.wellseecoding.server.entity.likes.LikeRepository;
 import com.wellseecoding.server.entity.post.KeywordPostMapRepository;
 import com.wellseecoding.server.entity.post.PostRepository;
@@ -55,5 +56,11 @@ public class ServiceConfig {
                                          UserRepository userRepository,
                                          PostRepository postRepository) {
         return new CommentService(commentRepository, userRepository, postRepository);
+    }
+
+    @Bean
+    public GroupService groupService(MemberRepository memberRepository,
+                                     PostRepository postRepository) {
+        return new GroupService(memberRepository, postRepository);
     }
 }

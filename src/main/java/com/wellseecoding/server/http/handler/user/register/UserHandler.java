@@ -3,6 +3,7 @@ package com.wellseecoding.server.http.handler.user.register;
 import com.wellseecoding.server.http.ContextNameRegistry;
 import com.wellseecoding.server.http.CookieNameRegistry;
 import com.wellseecoding.server.http.token.AccessTokenGenerator;
+import com.wellseecoding.server.service.GroupService;
 import com.wellseecoding.server.service.UserService;
 import com.wellseecoding.server.entity.user.User;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import reactor.core.publisher.Mono;
 public class UserHandler {
     private final AccessTokenGenerator accessTokenGenerator;
     private final UserService userService;
+    private final GroupService groupService;
 
     public Mono<ServerResponse> handleRegister(ServerRequest request) {
         return request.bodyToMono(UserRegisterRequest.class)
@@ -80,5 +82,11 @@ public class UserHandler {
                        return Mono.fromFuture(userService.removeLike(userId, postId));
                    })
                    .then(ServerResponse.ok().build());
+    }
+
+    public Mono<ServerResponse> getGroups(ServerRequest request) {
+        return Mono.deferContextual(contextView -> Mono.just((Long) contextView.get(ContextNameRegistry.USER_ID)))
+                   .flatMap(userId -> Mono.fromFuture(groupService.getGroupsForUser(userId)))
+                   .flatMap(groups -> ServerResponse.ok().body(BodyInserters.fromValue(new GroupResponse(groups))));
     }
 }

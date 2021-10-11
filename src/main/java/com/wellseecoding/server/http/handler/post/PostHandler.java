@@ -1,6 +1,8 @@
 package com.wellseecoding.server.http.handler.post;
 
 import com.wellseecoding.server.http.ContextNameRegistry;
+import com.wellseecoding.server.http.handler.user.register.GroupResponse;
+import com.wellseecoding.server.service.GroupService;
 import com.wellseecoding.server.service.PostService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -20,6 +22,7 @@ import static java.util.Objects.nonNull;
 @Component
 public class PostHandler {
     private final PostService postService;
+    private final GroupService groupService;
 
     public Mono<ServerResponse> write(ServerRequest serverRequest) {
         return Mono.deferContextual(contextView -> Mono.just((Long) contextView.get(ContextNameRegistry.USER_ID)))
@@ -80,5 +83,50 @@ public class PostHandler {
         } else {
             return Mono.empty();
         }
+    }
+
+    public Mono<ServerResponse> getGroups(ServerRequest request) {
+        return getPostId(request)
+                .zipWith(Mono.deferContextual(contextView -> Mono.just((Long) contextView.get(ContextNameRegistry.USER_ID))))
+                .flatMap(tuple -> {
+                    final long postId = tuple.getT1();
+                    final long userId = tuple.getT2();
+                    return Mono.fromFuture(groupService.getMembersForPost(userId, postId));
+                })
+                .flatMap(members -> ServerResponse.ok().body(BodyInserters.fromValue(new GroupResponse(members))));
+    }
+
+    public Mono<ServerResponse> applyAsMember(ServerRequest request) {
+        return getPostId(request)
+                .zipWith(Mono.deferContextual(contextView -> Mono.just((Long) contextView.get(ContextNameRegistry.USER_ID))))
+                .flatMap(tuple -> {
+                    final long postId = tuple.getT1();
+                    final long userId = tuple.getT2();
+                    return Mono.fromFuture(groupService.applyAsMember(userId, postId));
+                })
+                .then(ServerResponse.ok().build());
+    }
+
+    private Mono<Long> getTargetUserId(ServerRequest request) {
+        Map<String, String> pathVariables = request.pathVariables();
+        String userId = pathVariables.get("userId");
+        if (nonNull(userId)) {
+            return Mono.just(Long.valueOf(userId));
+        } else {
+            return Mono.empty();
+        }
+    }
+
+    public Mono<ServerResponse> acceptApplicant(ServerRequest request) {
+        return getPostId(request)
+                .zipWith(getTargetUserId(request))
+                .zipWith(Mono.deferContextual(contextView -> Mono.just((Long) contextView.get(ContextNameRegistry.USER_ID))))
+                .flatMap(triple -> {
+                    final long postId = triple.getT1().getT1();
+                    final long targetUserId = triple.getT1().getT2();
+                    final long sourceUserId = triple.getT2();
+                    return Mono.fromFuture(groupService.acceptApplicant(sourceUserId, targetUserId, postId));
+                })
+                .then(ServerResponse.ok().build());
     }
 }
