@@ -139,3 +139,14 @@ CREATE TABLE `likes`
     CONSTRAINT `likes_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
     CONSTRAINT `likes_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`)
 );
+
+CREATE TABLE `members`
+(
+    `user_id`    INT NOT NULL,
+    `post_id`    INT NOT NULL,
+    `authorized` BIT NOT NULL,
+    PRIMARY KEY (`user_id`, `post_id`),
+    KEY          `members_key_post_id` (`post_id`),
+    CONSTRAINT `members_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+    CONSTRAINT `members_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`)
+);
