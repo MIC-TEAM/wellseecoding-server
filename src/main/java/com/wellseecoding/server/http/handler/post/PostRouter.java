@@ -20,7 +20,12 @@ public class PostRouter {
                         .path("/{id}", postBuilder -> {
                             postBuilder.GET("", postHandler::get)
                                        .DELETE("", postHandler::remove)
-                                       .PUT("", contentType(MediaType.APPLICATION_JSON), postHandler::overwrite);
+                                       .PUT("", contentType(MediaType.APPLICATION_JSON), postHandler::overwrite)
+                                       .path("/members", groupBuilder -> {
+                                           groupBuilder.GET("", postHandler::getGroups)
+                                                       .POST("", postHandler::applyAsMember)
+                                                       .PUT("/{userId}", postHandler::acceptApplicant);
+                                       });
                         })
                         .filter(new UserIdExtractor());
         }).build();
