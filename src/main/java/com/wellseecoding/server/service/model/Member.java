@@ -8,5 +8,6 @@ import lombok.Getter;
 public class Member {
     private final long userId;
     private final long postId;
+    private final String name;
     private final boolean authorized;
 }
