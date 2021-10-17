@@ -4,6 +4,8 @@ import com.wellseecoding.server.entity.group.Member;
 import com.wellseecoding.server.entity.group.MemberRepository;
 import com.wellseecoding.server.entity.post.Post;
 import com.wellseecoding.server.entity.post.PostRepository;
+import com.wellseecoding.server.entity.user.User;
+import com.wellseecoding.server.entity.user.UserRepository;
 import lombok.AllArgsConstructor;
 
 import java.util.Collection;
@@ -15,6 +17,7 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class GroupService {
+    private final UserRepository userRepository;
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
 
@@ -24,9 +27,13 @@ public class GroupService {
 
     private List<com.wellseecoding.server.service.model.Member> stripEntity(Collection<Member> members) {
         return members.stream()
-                      .map(member -> new com.wellseecoding.server.service.model.Member(member.getUserId(),
-                                                                                       member.getPost().getId(),
-                                                                                       member.isAuthorized()))
+                      .map(member -> {
+                          final Optional<User> user = userRepository.findById(member.getUserId());
+                          return new com.wellseecoding.server.service.model.Member(member.getUserId(),
+                                                                                   member.getPost().getId(),
+                                                                                   user.get().getUsername(),
+                                                                                   member.isAuthorized());
+                      })
                       .collect(Collectors.toList());
     }
 

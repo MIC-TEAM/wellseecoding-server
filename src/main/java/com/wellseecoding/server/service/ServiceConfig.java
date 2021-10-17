@@ -59,8 +59,9 @@ public class ServiceConfig {
     }
 
     @Bean
-    public GroupService groupService(MemberRepository memberRepository,
+    public GroupService groupService(UserRepository userRepository,
+                                     MemberRepository memberRepository,
                                      PostRepository postRepository) {
-        return new GroupService(memberRepository, postRepository);
+        return new GroupService(userRepository, memberRepository, postRepository);
     }
 }
