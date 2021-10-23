@@ -14,6 +14,8 @@ import javax.persistence.*;
 @Table(name = "members")
 public class Member {
     @Id
+    @GeneratedValue
+    private Long id;
     private Long userId;
     private boolean authorized;
 
