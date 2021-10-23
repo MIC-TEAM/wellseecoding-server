@@ -89,4 +89,10 @@ public class UserHandler {
                    .flatMap(userId -> Mono.fromFuture(groupService.getGroupsForUser(userId)))
                    .flatMap(groups -> ServerResponse.ok().body(BodyInserters.fromValue(new GroupResponse(groups))));
     }
+
+    public Mono<ServerResponse> getRegisteredGroups(ServerRequest request) {
+        return Mono.deferContextual(contextView -> Mono.just((Long) contextView.get(ContextNameRegistry.USER_ID)))
+                   .flatMap(userId -> Mono.fromFuture(groupService.getRegisteredGroups(userId)))
+                   .flatMap(groups -> ServerResponse.ok().body(BodyInserters.fromValue(new RegisteredGroupResponse(groups))));
+    }
 }
