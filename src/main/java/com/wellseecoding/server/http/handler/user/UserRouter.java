@@ -33,7 +33,8 @@ public class UserRouter {
             }).path("/token", loginBuilder -> {
                 loginBuilder.POST("", contentType(MediaType.APPLICATION_JSON), userHandler::handleLogin);
             }).path("/groups", groupBuilder -> {
-                groupBuilder.GET("", userHandler::getGroups)
+                groupBuilder.GET("/registered", userHandler::getRegisteredGroups)
+                            .GET("", userHandler::getGroups)
                             .filter(new UserIdExtractor());
             }).POST(contentType(MediaType.APPLICATION_JSON), userHandler::handleRegister);
         }).build();

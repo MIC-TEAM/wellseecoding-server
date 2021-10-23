@@ -103,4 +103,17 @@ public class GroupService {
             return null;
         });
     }
+
+    public CompletableFuture<List<Long>> getRegisteredGroups(long userId) {
+        return CompletableFuture.supplyAsync(() -> {
+            if (userId <= 0) {
+                throw new IllegalArgumentException(userId + " is a wrong user id");
+            }
+            return memberRepository.findAllByUserId(userId)
+                                   .stream()
+                                   .filter(Member::isAuthorized)
+                                   .map(member -> member.getPost().getId())
+                                   .collect(Collectors.toList());
+        });
+    }
 }
