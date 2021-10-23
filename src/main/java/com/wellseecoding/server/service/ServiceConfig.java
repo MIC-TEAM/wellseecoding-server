@@ -43,12 +43,14 @@ public class ServiceConfig {
                                    TagRepository tagRepository,
                                    TagPostMapRepository tagPostMapRepository,
                                    KeywordPostMapRepository keywordPostMapRepository,
-                                   CommentRepository commentRepository) {
+                                   CommentRepository commentRepository,
+                                   LikeRepository likeRepository) {
         return new PostService(postRepository,
                                tagRepository,
                                tagPostMapRepository,
                                keywordPostMapRepository,
-                               commentRepository);
+                               commentRepository,
+                               likeRepository);
     }
 
     @Bean

@@ -1,6 +1,7 @@
 package com.wellseecoding.server.service;
 
 import com.wellseecoding.server.entity.comment.CommentRepository;
+import com.wellseecoding.server.entity.likes.LikeRepository;
 import com.wellseecoding.server.entity.post.KeywordPostMap;
 import com.wellseecoding.server.entity.post.KeywordPostMapRepository;
 import com.wellseecoding.server.entity.tag.Tag;
@@ -27,6 +28,7 @@ public class PostService {
     private final TagPostMapRepository tagPostMapRepository;
     private final KeywordPostMapRepository keywordPostMapRepository;
     private final CommentRepository commentRepository;
+    private final LikeRepository likeRepository;
 
     public CompletableFuture<Void> write(Long userId, PostRequest postRequest) {
         return CompletableFuture.supplyAsync(() -> {
@@ -96,6 +98,8 @@ public class PostService {
             if (ObjectUtils.notEqual(post.getUserId(), userId)) {
                 throw new IllegalArgumentException("post " + postId + " does not belong to user " + userId);
             }
+            likeRepository.findAllByLikeIdPostId(postId)
+                          .forEach(likeRepository::delete);
             postRepository.delete(post);
             post.getTagPostMaps().forEach(tagPostMap -> {
                 Tag tag = tagPostMap.getTag();
