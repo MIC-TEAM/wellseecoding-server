@@ -142,10 +142,12 @@ CREATE TABLE `likes`
 
 CREATE TABLE `members`
 (
+    `id`         INT NOT NULL AUTO_INCREMENT,
     `user_id`    INT NOT NULL,
     `post_id`    INT NOT NULL,
     `authorized` BIT NOT NULL,
-    PRIMARY KEY (`user_id`, `post_id`),
+    PRIMARY KEY (`id`),
+    KEY          `members_key_user_id_post_id` (`user_id`, `post_id`),
     KEY          `members_key_post_id` (`post_id`),
     CONSTRAINT `members_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
     CONSTRAINT `members_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`)
