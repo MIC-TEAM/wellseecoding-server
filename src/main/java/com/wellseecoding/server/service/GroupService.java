@@ -58,10 +58,8 @@ public class GroupService {
             }
 
             Optional<Member> member = getMember(post.get().getMembers(), userId);
-            boolean isAuthorizedMember = member.isPresent() &&
-                                         member.get().isAuthorized();
-            if (isAuthorizedMember) {
-                return null;
+            if (member.isEmpty() == false) {
+                throw new IllegalArgumentException(userId + " is already a member of " + postId);
             }
             memberRepository.save(Member.builder()
                                         .userId(userId)
