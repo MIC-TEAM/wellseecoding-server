@@ -6,6 +6,7 @@ import com.wellseecoding.server.entity.post.Post;
 import com.wellseecoding.server.entity.post.PostRepository;
 import com.wellseecoding.server.entity.user.User;
 import com.wellseecoding.server.entity.user.UserRepository;
+import com.wellseecoding.server.service.model.EventCategory;
 import lombok.AllArgsConstructor;
 
 import java.util.Collection;
@@ -20,6 +21,7 @@ public class GroupService {
     private final UserRepository userRepository;
     private final MemberRepository memberRepository;
     private final PostRepository postRepository;
+    private final NotificationService notificationService;
 
     public CompletableFuture<List<com.wellseecoding.server.service.model.Member>> getGroupsForUser(long userId) {
         return CompletableFuture.supplyAsync(() -> stripEntity(memberRepository.findAllByUserId(userId)));
@@ -66,6 +68,7 @@ public class GroupService {
                                         .authorized(false)
                                         .post(post.get())
                                         .build());
+            notificationService.notify(userId, postId, EventCategory.MEMBER_APPLIED);
             return null;
         });
     }
@@ -98,6 +101,7 @@ public class GroupService {
 
             member.get().setAuthorized(true);
             memberRepository.save(member.get());
+            notificationService.notify(targetUserId, postId, EventCategory.MEMBER_APPROVED);
             return null;
         });
     }

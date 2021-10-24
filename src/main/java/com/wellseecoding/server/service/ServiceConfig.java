@@ -4,6 +4,7 @@ import com.google.common.hash.Hashing;
 import com.wellseecoding.server.entity.comment.CommentRepository;
 import com.wellseecoding.server.entity.group.MemberRepository;
 import com.wellseecoding.server.entity.likes.LikeRepository;
+import com.wellseecoding.server.entity.notification.NotificationRepository;
 import com.wellseecoding.server.entity.post.KeywordPostMapRepository;
 import com.wellseecoding.server.entity.post.PostRepository;
 import com.wellseecoding.server.entity.tag.TagPostMapRepository;
@@ -56,14 +57,21 @@ public class ServiceConfig {
     @Bean
     public CommentService commentService(CommentRepository commentRepository,
                                          UserRepository userRepository,
-                                         PostRepository postRepository) {
-        return new CommentService(commentRepository, userRepository, postRepository);
+                                         PostRepository postRepository,
+                                         NotificationService notificationService) {
+        return new CommentService(commentRepository, userRepository, postRepository, notificationService);
     }
 
     @Bean
     public GroupService groupService(UserRepository userRepository,
                                      MemberRepository memberRepository,
-                                     PostRepository postRepository) {
-        return new GroupService(userRepository, memberRepository, postRepository);
+                                     PostRepository postRepository,
+                                     NotificationService notificationService) {
+        return new GroupService(userRepository, memberRepository, postRepository, notificationService);
+    }
+
+    @Bean
+    public NotificationService notificationService(NotificationRepository notificationRepository) {
+        return new NotificationService(notificationRepository);
     }
 }

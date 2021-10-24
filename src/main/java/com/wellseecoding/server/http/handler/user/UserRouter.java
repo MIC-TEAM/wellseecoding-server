@@ -36,6 +36,9 @@ public class UserRouter {
                 groupBuilder.GET("/registered", userHandler::getRegisteredGroups)
                             .GET("", userHandler::getGroups)
                             .filter(new UserIdExtractor());
+            }).path("/notifications", notificationBuilder -> {
+                notificationBuilder.GET("", userHandler::getNotifications)
+                                   .filter(new UserIdExtractor());
             }).POST(contentType(MediaType.APPLICATION_JSON), userHandler::handleRegister);
         }).build();
     }

@@ -2,10 +2,12 @@ package com.wellseecoding.server.service;
 
 import com.wellseecoding.server.entity.comment.CommentEntity;
 import com.wellseecoding.server.entity.comment.CommentRepository;
+import com.wellseecoding.server.entity.notification.NotificationRepository;
 import com.wellseecoding.server.entity.post.PostRepository;
 import com.wellseecoding.server.entity.user.User;
 import com.wellseecoding.server.entity.user.UserRepository;
 import com.wellseecoding.server.service.model.Comment;
+import com.wellseecoding.server.service.model.EventCategory;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -18,6 +20,7 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final NotificationService notificationService;
 
     public CompletableFuture<Void> addComment(long userId,
                                               long postId,
@@ -57,6 +60,7 @@ public class CommentService {
                                                 .deleted(false)
                                                 .text(text)
                                                 .build());
+            notificationService.notify(userId, postId, EventCategory.COMMENT_ADDED);
             return null;
         });
     }
