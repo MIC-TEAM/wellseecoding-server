@@ -2,7 +2,7 @@ package com.wellseecoding.server.service;
 
 import com.wellseecoding.server.entity.comment.CommentEntity;
 import com.wellseecoding.server.entity.comment.CommentRepository;
-import com.wellseecoding.server.entity.notification.NotificationRepository;
+import com.wellseecoding.server.entity.post.Post;
 import com.wellseecoding.server.entity.post.PostRepository;
 import com.wellseecoding.server.entity.user.User;
 import com.wellseecoding.server.entity.user.UserRepository;
@@ -44,7 +44,8 @@ public class CommentService {
             if (userRepository.existsById(userId) == false) {
                 throw new IllegalArgumentException("user " + userId + " does not exist");
             }
-            if (postRepository.existsById(postId) == false) {
+            Optional<Post> optionalPost = postRepository.findById(postId);
+            if (optionalPost.isEmpty()) {
                 throw new IllegalArgumentException("post " + postId + " does not exist");
             }
             boolean isParentMissing = (parentCommentId > 0) &&
@@ -60,7 +61,7 @@ public class CommentService {
                                                 .deleted(false)
                                                 .text(text)
                                                 .build());
-            notificationService.notify(userId, postId, EventCategory.COMMENT_ADDED);
+            notificationService.notify(optionalPost.get().getUserId(), postId, EventCategory.COMMENT_ADDED);
             return null;
         });
     }
