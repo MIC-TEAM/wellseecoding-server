@@ -104,7 +104,11 @@ public class PostHandler {
                     final long userId = tuple.getT2();
                     return Mono.fromFuture(groupService.applyAsMember(userId, postId));
                 })
-                .then(ServerResponse.ok().build());
+                .then(ServerResponse.ok().build())
+                .onErrorResume(IllegalArgumentException.class, e -> {
+                    return ServerResponse.badRequest()
+                                         .body(BodyInserters.fromValue(new ErrorResponse(e.getMessage())));
+                });
     }
 
     private Mono<Long> getTargetUserId(ServerRequest request) {
