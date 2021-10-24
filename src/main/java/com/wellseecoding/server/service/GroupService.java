@@ -68,7 +68,7 @@ public class GroupService {
                                         .authorized(false)
                                         .post(post.get())
                                         .build());
-            notificationService.notify(userId, postId, EventCategory.MEMBER_APPLIED);
+            notificationService.notify(post.get().getUserId(), postId, EventCategory.MEMBER_APPLIED);
             return null;
         });
     }
