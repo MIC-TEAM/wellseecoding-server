@@ -38,6 +38,9 @@ public class UserRouter {
                             .filter(new UserIdExtractor());
             }).path("/notifications", notificationBuilder -> {
                 notificationBuilder.GET("", userHandler::getNotifications)
+                                   .DELETE("", userHandler::removeAllNotifications)
+                                   .PUT("/read", userHandler::markAsReadAll)
+                                   .PUT("/{notificationId}/read", userHandler::markAsRead)
                                    .filter(new UserIdExtractor());
             }).POST(contentType(MediaType.APPLICATION_JSON), userHandler::handleRegister);
         }).build();

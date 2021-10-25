@@ -103,4 +103,25 @@ public class UserHandler {
                    .flatMap(userId -> Mono.fromFuture(notificationService.getAllNotifications(userId)))
                    .flatMap(notifications -> ServerResponse.ok().body(BodyInserters.fromValue(new NotificationResponse(notifications))));
     }
+
+    public Mono<ServerResponse> removeAllNotifications(ServerRequest request) {
+        return Mono.deferContextual(contextView -> Mono.just((Long) contextView.get(ContextNameRegistry.USER_ID)))
+                   .flatMap(userId -> Mono.fromFuture(notificationService.removeAll(userId)))
+                   .then(ServerResponse.ok().build());
+    }
+
+    public Mono<ServerResponse> markAsReadAll(ServerRequest request) {
+        return Mono.deferContextual(contextView -> Mono.just((Long) contextView.get(ContextNameRegistry.USER_ID)))
+                   .flatMap(userId -> Mono.fromFuture(notificationService.markAsReadAll(userId)))
+                   .then(ServerResponse.ok().build());
+    }
+
+    public Mono<ServerResponse> markAsRead(ServerRequest request) {
+        return Mono.deferContextual(contextView -> Mono.just((Long) contextView.get(ContextNameRegistry.USER_ID)))
+                   .flatMap(userId -> {
+                       final long notificationId = Long.parseLong(request.pathVariable("notificationId"));
+                       return Mono.fromFuture(notificationService.markAsRead(userId, notificationId));
+                   })
+                   .then(ServerResponse.ok().build());
+    }
 }
