@@ -71,7 +71,9 @@ public class ServiceConfig {
     }
 
     @Bean
-    public NotificationService notificationService(NotificationRepository notificationRepository) {
-        return new NotificationService(notificationRepository);
+    public NotificationService notificationService(UserRepository userRepository,
+                                                   PostRepository postRepository,
+                                                   NotificationRepository notificationRepository) {
+        return new NotificationService(userRepository, postRepository, notificationRepository);
     }
 }

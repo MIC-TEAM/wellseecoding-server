@@ -68,7 +68,7 @@ public class GroupService {
                                         .authorized(false)
                                         .post(post.get())
                                         .build());
-            notificationService.notify(post.get().getUserId(), postId, EventCategory.MEMBER_APPLIED);
+            notificationService.notify(userId, post.get().getUserId(), postId, EventCategory.MEMBER_APPLIED);
             return null;
         });
     }
@@ -101,7 +101,7 @@ public class GroupService {
 
             member.get().setAuthorized(true);
             memberRepository.save(member.get());
-            notificationService.notify(targetUserId, postId, EventCategory.MEMBER_APPROVED);
+            notificationService.notify(sourceUserId, targetUserId, postId, EventCategory.MEMBER_APPROVED);
             return null;
         });
     }

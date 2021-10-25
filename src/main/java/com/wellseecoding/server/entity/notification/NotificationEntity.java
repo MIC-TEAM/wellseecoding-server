@@ -15,8 +15,10 @@ public class NotificationEntity {
     @Id
     @GeneratedValue
     private Long id;
-    @Column(name = "user_id")
-    private Long userId;
+    @Column(name = "sender_user_id")
+    private Long senderUserId;
+    @Column(name = "receiver_user_id")
+    private Long receiverUserId;
     @Column(name = "post_id")
     private Long postId;
     @Column(name = "event_category")

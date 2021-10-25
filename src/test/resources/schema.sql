@@ -155,14 +155,16 @@ CREATE TABLE `members`
 
 CREATE TABLE `notifications`
 (
-    `id`             INT NOT NULL AUTO_INCREMENT,
-    `user_id`        INT NOT NULL,
-    `post_id`        INT NOT NULL,
-    `event_category` INT NOT NULL,
-    `timestamp`      INT NOT NULL,
-    `stale`          BIT NOT NULL,
+    `id`               INT NOT NULL AUTO_INCREMENT,
+    `sender_user_id`   INT NOT NULL,
+    `receiver_user_id` INT NOT NULL,
+    `post_id`          INT NOT NULL,
+    `event_category`   INT NOT NULL,
+    `timestamp`        INT NOT NULL,
+    `stale`            BIT NOT NULL,
     PRIMARY KEY (`id`),
-    KEY              `notifications_key_user_id_timestamp` (`user_id`, `timestamp`),
-    CONSTRAINT `notifications_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+    KEY                `notifications_key_receiver_user_id_timestamp` (`receiver_user_id`, `timestamp`),
+    CONSTRAINT `notifications_sender_user_id` FOREIGN KEY (`sender_user_id`) REFERENCES `users` (`id`),
+    CONSTRAINT `notifications_receiver_user_id` FOREIGN KEY (`receiver_user_id`) REFERENCES `users` (`id`),
     CONSTRAINT `notifications_post_id` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`)
 );

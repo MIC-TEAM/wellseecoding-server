@@ -61,7 +61,7 @@ public class CommentService {
                                                 .deleted(false)
                                                 .text(text)
                                                 .build());
-            notificationService.notify(optionalPost.get().getUserId(), postId, EventCategory.COMMENT_ADDED);
+            notificationService.notify(userId, optionalPost.get().getUserId(), postId, EventCategory.COMMENT_ADDED);
             return null;
         });
     }
