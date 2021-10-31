@@ -16,13 +16,16 @@ public class SnsConfig {
     private String snsSuccessPage;
     @Value("${wellseecoding.http.uris.sns-failure}")
     private String snsFailurePage;
+    @Value("${wellseecoding.http.cookie-domain}")
+    private String cookieDomain;
 
     @Bean
     public ServerAuthenticationSuccessHandler serverAuthenticationSuccessHandler(UserService userService, AccessTokenGenerator accessTokenGenerator) {
         return new SnsAuthenticationSuccessHandler(
                 new RedirectServerAuthenticationSuccessHandler(snsSuccessPage),
                 accessTokenGenerator,
-                userService
+                userService,
+                cookieDomain
         );
     }
 

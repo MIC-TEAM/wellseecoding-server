@@ -21,18 +21,24 @@ public class SnsAuthenticationSuccessHandler implements ServerAuthenticationSucc
     private final ServerAuthenticationSuccessHandler delegate;
     private final AccessTokenGenerator accessTokenGenerator;
     private final UserService userService;
+    private final String cookieDomain;
 
     @Override
     public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
         return getOrSaveSnsUser(authentication)
                 .doOnNext(snsInfo -> {
                     final String accessToken = accessTokenGenerator.generate(snsInfo.getUser().getId(), snsInfo.getUser().getUsername());
-                    final ResponseCookie accessTokenCookie = ResponseCookie.from(CookieNameRegistry.ACCESS_TOKEN, accessToken).build();
+                    final ResponseCookie accessTokenCookie = ResponseCookie.from(CookieNameRegistry.ACCESS_TOKEN, accessToken)
+                                                                           .domain(cookieDomain)
+                                                                           .path("/")
+                                                                           .build();
                     webFilterExchange.getExchange().getResponse().addCookie(accessTokenCookie);
                 })
                 .doOnNext(snsInfo -> {
                     final String refreshToken = snsInfo.getUser().getRefreshToken();
                     final ResponseCookie refreshTokenCookie = ResponseCookie.from(CookieNameRegistry.REFRESH_TOKEN, refreshToken)
+                                                                            .domain(cookieDomain)
+                                                                            .path("/")
                                                                             .httpOnly(true)
                                                                             .build();
                     webFilterExchange.getExchange().getResponse().addCookie(refreshTokenCookie);
