@@ -2,7 +2,7 @@ spring:
   jpa:
     show-sql: true
   datasource:
-    url: "jdbc:mysql://${WC_MYSQL_AUTHORITY}/wellseecoding"
+    url: "jdbc:mysql://${WC_MYSQL_AUTHORITY}/${WC_MYSQL_DATABASE}"
     username: "${WC_MYSQL_USERNAME}"
     password: "${WC_MYSQL_PASSWORD}"
     driver-class-name: "com.mysql.jdbc.Driver"
