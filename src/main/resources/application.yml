@@ -36,6 +36,7 @@ spring:
 
 wellseecoding:
   http:
+    cookie-domain: "${WC_COOKIE_DOMAIN}"
     uris:
       sns-success: "${WC_SNS_SUCCESS_PAGE}"
       sns-failure: "${WC_SNS_FAILURE_PAGE}"
