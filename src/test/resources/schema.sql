@@ -5,8 +5,9 @@ CREATE TABLE `users`
     `password`      VARCHAR(512) NULL,
     `email`         VARCHAR(100) NOT NULL,
     `refresh_token` VARCHAR(512) NOT NULL,
-    `status`        VARCHAR(20)  NULL DEFAULT '',
+    `status`        VARCHAR(20) NULL DEFAULT '',
     `about_me`      VARCHAR(512) NULL DEFAULT '',
+    `job`           VARCHAR(100) NULL DEFAULT '',
     PRIMARY KEY (`id`),
     UNIQUE `idx1_email` (`email`),
     INDEX           `idx2_refresh_token` (`refresh_token`)

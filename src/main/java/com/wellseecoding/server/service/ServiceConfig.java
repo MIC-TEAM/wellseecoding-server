@@ -9,6 +9,7 @@ import com.wellseecoding.server.entity.post.KeywordPostMapRepository;
 import com.wellseecoding.server.entity.post.PostRepository;
 import com.wellseecoding.server.entity.tag.TagPostMapRepository;
 import com.wellseecoding.server.entity.tag.TagRepository;
+import com.wellseecoding.server.entity.tag.TagUserMapRepository;
 import com.wellseecoding.server.entity.user.UserRepository;
 import com.wellseecoding.server.entity.education.EducationRepository;
 import com.wellseecoding.server.entity.link.LinkRepository;
@@ -27,7 +28,9 @@ public class ServiceConfig {
                                    LinkRepository linkRepository,
                                    WorkRepository workRepository,
                                    SnsInfoRepository snsInfoRepository,
-                                   LikeRepository likeRepository) {
+                                   LikeRepository likeRepository,
+                                   TagRepository tagRepository,
+                                   TagUserMapRepository tagUserMapRepository) {
         return new UserService(
                 userRepository,
                 educationRepository,
@@ -35,7 +38,9 @@ public class ServiceConfig {
                 workRepository,
                 snsInfoRepository,
                 Hashing.sha512(), () -> UUID.randomUUID().toString(),
-                likeRepository
+                likeRepository,
+                tagRepository,
+                tagUserMapRepository
         );
     }
 

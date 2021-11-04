@@ -2,6 +2,7 @@ package com.wellseecoding.server.entity.user;
 
 import com.wellseecoding.server.entity.education.Education;
 import com.wellseecoding.server.entity.link.Link;
+import com.wellseecoding.server.entity.tag.TagUserMap;
 import com.wellseecoding.server.entity.work.Work;
 import lombok.*;
 
@@ -28,6 +29,7 @@ public class User {
     private String status;
     @Column(name = "about_me")
     private String aboutMe;
+    private String job;
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
@@ -43,4 +45,8 @@ public class User {
     @JoinColumn(name = "user_id")
     @Builder.Default
     private Set<Work> works = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.REMOVE)
+    @Builder.Default
+    private Set<TagUserMap> tagUserMaps = new HashSet<>();
 }
