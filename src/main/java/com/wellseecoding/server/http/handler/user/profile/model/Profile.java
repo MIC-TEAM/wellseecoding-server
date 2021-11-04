@@ -19,6 +19,8 @@ public class Profile {
     @Builder.Default
     private final String aboutMe = StringUtils.EMPTY;
     @Builder.Default
+    private final String job = StringUtils.EMPTY;
+    @Builder.Default
     private final List<String> tags = Collections.emptyList();
     @Builder.Default
     private final List<Education> educations = Collections.emptyList();

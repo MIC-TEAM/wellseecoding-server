@@ -4,6 +4,10 @@ import com.google.common.hash.HashFunction;
 import com.wellseecoding.server.entity.likes.Like;
 import com.wellseecoding.server.entity.likes.LikeId;
 import com.wellseecoding.server.entity.likes.LikeRepository;
+import com.wellseecoding.server.entity.tag.Tag;
+import com.wellseecoding.server.entity.tag.TagRepository;
+import com.wellseecoding.server.entity.tag.TagUserMap;
+import com.wellseecoding.server.entity.tag.TagUserMapRepository;
 import com.wellseecoding.server.http.handler.user.profile.model.Education;
 import com.wellseecoding.server.http.handler.user.profile.model.Link;
 import com.wellseecoding.server.http.handler.user.profile.model.Work;
@@ -36,6 +40,8 @@ public class UserService {
     private final HashFunction passwordHashFunction;
     private final Supplier<String> randomStringGenerator;
     private final LikeRepository likeRepository;
+    private final TagRepository tagRepository;
+    private final TagUserMapRepository tagUserMapRepository;
 
     public CompletableFuture<User> getUser(long userId) {
         return CompletableFuture.supplyAsync(() -> userRepository.findById(userId)).thenApply(optionalUser -> optionalUser.get());
@@ -49,12 +55,36 @@ public class UserService {
                 });
     }
 
-    public CompletableFuture<Void> setAboutMe(long userId, String aboutMe) {
+    public CompletableFuture<Void> setAboutMe(long userId, String aboutMe, List<String> tags, String job) {
         return getUser(userId)
                 .thenAccept(user -> {
                     user.setAboutMe(aboutMe);
+                    user.setJob(job);
                     userRepository.save(user);
+                    replaceTagsForUser(user, tags);
                 });
+    }
+
+    private void replaceTagsForUser(User user, List<String> tags) {
+        tagUserMapRepository.findAllByUserId(user.getId())
+                            .forEach(tagUserMapRepository::delete);
+        tags.stream()
+            .map(tag -> {
+                Optional<Tag> optionalTagEntity = tagRepository.findByValue(tag);
+                if (optionalTagEntity.isEmpty()) {
+                    return tagRepository.save(Tag.builder()
+                                                 .value(tag)
+                                                 .build());
+                } else {
+                    return optionalTagEntity.get();
+                }
+            })
+            .forEach(tagEntity -> {
+                tagUserMapRepository.save(TagUserMap.builder()
+                                                    .tag(tagEntity)
+                                                    .user(user)
+                                                    .build());
+            });
     }
 
     public CompletableFuture<Void> setEducations(long userId, List<Education> educations) {

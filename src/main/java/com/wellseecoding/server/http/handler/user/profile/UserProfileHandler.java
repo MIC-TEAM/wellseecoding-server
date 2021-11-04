@@ -32,7 +32,10 @@ public class UserProfileHandler {
     public Mono<ServerResponse> setPreface(ServerRequest serverRequest) {
         return Mono.deferContextual(contextView -> Mono.just((Long) contextView.get(ContextNameRegistry.USER_ID)))
                    .zipWith(serverRequest.bodyToMono(Profile.class))
-                   .flatMap(tuple -> Mono.fromFuture(userService.setAboutMe(tuple.getT1(), tuple.getT2().getAboutMe())))
+                   .flatMap(tuple -> Mono.fromFuture(userService.setAboutMe(tuple.getT1(),
+                                                                            tuple.getT2().getAboutMe(),
+                                                                            tuple.getT2().getTags(),
+                                                                            tuple.getT2().getJob())))
                    .then(ServerResponse.ok().build());
     }
 
@@ -69,6 +72,7 @@ public class UserProfileHandler {
         Profile.ProfileBuilder builder = Profile.builder();
         builder.status(user.getStatus());
         builder.aboutMe(user.getAboutMe());
+        builder.job(user.getJob());
 
         List<Education> educations = new ArrayList<>();
         user.getEducations()
@@ -102,6 +106,11 @@ public class UserProfileHandler {
                               .build());
             });
         builder.works(works);
+
+        List<String> tags = new ArrayList<>();
+        user.getTagUserMaps()
+                .forEach(tagUserMap -> tags.add(tagUserMap.getTag().getValue()));
+        builder.tags(tags);
 
         return builder.build();
     }
