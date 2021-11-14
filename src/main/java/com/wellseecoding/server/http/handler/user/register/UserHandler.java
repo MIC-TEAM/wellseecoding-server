@@ -2,6 +2,7 @@ package com.wellseecoding.server.http.handler.user.register;
 
 import com.wellseecoding.server.http.ContextNameRegistry;
 import com.wellseecoding.server.http.CookieNameRegistry;
+import com.wellseecoding.server.http.HttpPropertyConfig;
 import com.wellseecoding.server.http.token.AccessTokenGenerator;
 import com.wellseecoding.server.service.GroupService;
 import com.wellseecoding.server.service.NotificationService;
@@ -22,6 +23,7 @@ public class UserHandler {
     private final UserService userService;
     private final GroupService groupService;
     private final NotificationService notificationService;
+    private final HttpPropertyConfig httpPropertyConfig;
 
     public Mono<ServerResponse> handleRegister(ServerRequest request) {
         return request.bodyToMono(UserRegisterRequest.class)
@@ -44,10 +46,15 @@ public class UserHandler {
 
     private Mono<ServerResponse> createResponse(User user) {
         final String accessToken = accessTokenGenerator.generate(user.getId(), user.getUsername());
-        final ResponseCookie accessTokenCookie = ResponseCookie.from(CookieNameRegistry.ACCESS_TOKEN, accessToken).build();
+        final ResponseCookie accessTokenCookie = ResponseCookie.from(CookieNameRegistry.ACCESS_TOKEN, accessToken)
+                                                               .domain(httpPropertyConfig.getCookieDomain())
+                                                               .path("/")
+                                                               .build();
 
         final String refreshToken = user.getRefreshToken();
         final ResponseCookie refreshTokenCookie = ResponseCookie.from(CookieNameRegistry.REFRESH_TOKEN, refreshToken)
+                                                                .domain(httpPropertyConfig.getCookieDomain())
+                                                                .path("/")
                                                                 .httpOnly(true)
                                                                 .build();
 
