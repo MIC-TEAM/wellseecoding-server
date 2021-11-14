@@ -1,6 +1,7 @@
 package com.wellseecoding.server.service;
 
 import com.wellseecoding.server.entity.comment.CommentRepository;
+import com.wellseecoding.server.entity.group.Member;
 import com.wellseecoding.server.entity.likes.LikeRepository;
 import com.wellseecoding.server.entity.post.KeywordPostMap;
 import com.wellseecoding.server.entity.post.KeywordPostMapRepository;
@@ -13,6 +14,7 @@ import com.wellseecoding.server.entity.user.UserRepository;
 import com.wellseecoding.server.http.handler.post.PostRequest;
 import com.wellseecoding.server.entity.post.Post;
 import com.wellseecoding.server.entity.post.PostRepository;
+import com.wellseecoding.server.service.model.LinkPerPost;
 import com.wellseecoding.server.service.model.ThemedPost;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
@@ -203,6 +205,50 @@ public class PostService {
                                         });
             });
             return new ArrayList<>(posts.values());
+        });
+    }
+
+    public CompletableFuture<LinkPerPost> getLinkPerPost(long postId, long userId) {
+        return CompletableFuture.supplyAsync(() -> {
+            final Optional<Post> post = postRepository.findById(postId);
+            if (post.isEmpty()) {
+                throw new IllegalArgumentException("post " + postId + " does not exist");
+            }
+
+            if (isMemberOrOwner(post.get(), userId) == false) {
+                throw new IllegalArgumentException("user " + userId + " is not a member of post " + postId);
+            }
+
+            return new LinkPerPost(post.get().getLink());
+        });
+    }
+
+    private boolean isMemberOrOwner(Post post, long userId) {
+        if (Objects.equals(userId, post.getUser().getId())) {
+            return true;
+        }
+        for (Member member : post.getMembers()) {
+            if (Objects.equals(userId, member.getUserId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public CompletableFuture<Void> setLinkPerPost(long postId, long userId, String newLink) {
+        return CompletableFuture.supplyAsync(() -> {
+            final Optional<Post> post = postRepository.findById(postId);
+            if (post.isEmpty()) {
+                throw new IllegalArgumentException("post " + postId + " does not exist");
+            }
+
+            if (Objects.equals(userId, post.get().getUser().getId()) == false) {
+                throw new IllegalArgumentException("user " + userId + " is not a owner of post " + postId);
+            }
+
+            post.get().setLink(newLink);
+            postRepository.save(post.get());
+            return null;
         });
     }
 }

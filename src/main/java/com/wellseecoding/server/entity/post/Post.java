@@ -26,6 +26,7 @@ public class Post {
     private String summary;
     private String qualification;
     private String size;
+    private String link;
 
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")

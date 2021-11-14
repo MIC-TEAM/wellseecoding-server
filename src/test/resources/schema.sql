@@ -69,6 +69,7 @@ CREATE TABLE `posts`
     `summary`       varchar(1024) NOT NULL,
     `qualification` varchar(512)  NOT NULL,
     `size`          varchar(128)  NOT NULL,
+    `link`          varchar(1024) NOT NULL,
     PRIMARY KEY (`id`),
     INDEX           `idx1_user_id` (`user_id`),
     CONSTRAINT `posts_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
