@@ -8,6 +8,8 @@ import com.wellseecoding.server.entity.tag.Tag;
 import com.wellseecoding.server.entity.tag.TagPostMap;
 import com.wellseecoding.server.entity.tag.TagPostMapRepository;
 import com.wellseecoding.server.entity.tag.TagRepository;
+import com.wellseecoding.server.entity.user.User;
+import com.wellseecoding.server.entity.user.UserRepository;
 import com.wellseecoding.server.http.handler.post.PostRequest;
 import com.wellseecoding.server.entity.post.Post;
 import com.wellseecoding.server.entity.post.PostRepository;
@@ -29,12 +31,18 @@ public class PostService {
     private final KeywordPostMapRepository keywordPostMapRepository;
     private final CommentRepository commentRepository;
     private final LikeRepository likeRepository;
+    private final UserRepository userRepository;
 
     public CompletableFuture<Void> write(Long userId, PostRequest postRequest) {
         return CompletableFuture.supplyAsync(() -> {
+            final Optional<User> optionalUser = userRepository.findById(userId);
+            if (optionalUser.isEmpty()) {
+                throw new IllegalArgumentException("user " + userId + " does not exist");
+            }
+
             Post post = postRepository.save(Post.builder()
-                                                .userId(userId)
                                                 .name(postRequest.getName())
+                                                .user(optionalUser.get())
                                                 .deadline(postRequest.getDeadline())
                                                 .schedule(postRequest.getSchedule())
                                                 .summary(postRequest.getSummary())
@@ -95,7 +103,7 @@ public class PostService {
             if (Objects.isNull(post)) {
                 throw new IllegalArgumentException("post " + postId + " does not exist");
             }
-            if (ObjectUtils.notEqual(post.getUserId(), userId)) {
+            if (ObjectUtils.notEqual(post.getUser().getId(), userId)) {
                 throw new IllegalArgumentException("post " + postId + " does not belong to user " + userId);
             }
             likeRepository.findAllByLikeIdPostId(postId)
@@ -118,7 +126,7 @@ public class PostService {
             if (Objects.isNull(post)) {
                 throw new IllegalArgumentException("post " + postId + " does not exist");
             }
-            if (ObjectUtils.notEqual(post.getUserId(), userId)) {
+            if (ObjectUtils.notEqual(post.getUser().getId(), userId)) {
                 throw new IllegalArgumentException("post " + postId + " does not belong to user " + userId);
             }
             post.setDeadline(postRequest.getDeadline());

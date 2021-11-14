@@ -45,7 +45,7 @@ public class GroupService {
             if (post.isEmpty()) {
                 throw new IllegalArgumentException(postId + " does not exist");
             }
-            if (Objects.equals(userId, post.get().getUserId()) == false) {
+            if (Objects.equals(userId, post.get().getUser().getId()) == false) {
                 throw new IllegalArgumentException(userId + " is not authorized");
             }
             return stripEntity(post.get().getMembers());
@@ -68,7 +68,7 @@ public class GroupService {
                                         .authorized(false)
                                         .post(post.get())
                                         .build());
-            notificationService.notify(userId, post.get().getUserId(), postId, EventCategory.MEMBER_APPLIED);
+            notificationService.notify(userId, post.get().getUser().getId(), postId, EventCategory.MEMBER_APPLIED);
             return null;
         });
     }
@@ -90,7 +90,7 @@ public class GroupService {
             if (post.isEmpty()) {
                 throw new IllegalArgumentException(postId + " does not exist");
             }
-            if (Objects.equals(sourceUserId, post.get().getUserId()) == false) {
+            if (Objects.equals(sourceUserId, post.get().getUser().getId()) == false) {
                 throw new IllegalArgumentException(sourceUserId + " is not authorized");
             }
 

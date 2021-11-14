@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public class Post {
     private Long id;
     private Long userId;
+    private String userName;
     private String name;
     private String deadline;
     private String schedule;
@@ -23,7 +24,8 @@ public class Post {
     public static Post fromEntity(com.wellseecoding.server.entity.post.Post entity, long commentCount) {
         return new Post(
                 entity.getId(),
-                entity.getUserId(),
+                entity.getUser().getId(),
+                entity.getUser().getUsername(),
                 entity.getName(),
                 entity.getDeadline(),
                 entity.getSchedule(),
