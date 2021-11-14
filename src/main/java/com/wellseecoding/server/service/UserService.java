@@ -164,6 +164,19 @@ public class UserService {
         return CompletableFuture.supplyAsync(() -> userRepository.save(user));
     }
 
+    public CompletableFuture<User> resetToken(String refreshToken) {
+        return CompletableFuture.supplyAsync(() -> {
+            final Optional<User> optionalUser = userRepository.findByRefreshToken(refreshToken);
+            if (optionalUser.isEmpty()) {
+                throw new IllegalArgumentException("refresh token " + refreshToken + " does not exist");
+            }
+
+            optionalUser.get().setRefreshToken(randomStringGenerator.get());
+            userRepository.save(optionalUser.get());
+            return optionalUser.get();
+        });
+    }
+
     private CompletableFuture<Optional<User>> getUserByEmail(String email) {
         return CompletableFuture.supplyAsync(() -> userRepository.findByEmail(email));
     }
