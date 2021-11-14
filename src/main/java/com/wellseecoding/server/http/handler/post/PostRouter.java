@@ -21,6 +21,10 @@ public class PostRouter {
                             postBuilder.GET("", postHandler::get)
                                        .DELETE("", postHandler::remove)
                                        .PUT("", contentType(MediaType.APPLICATION_JSON), postHandler::overwrite)
+                                       .path("/link", linkBuilder -> {
+                                           linkBuilder.GET("", postHandler::getLinkPerPost)
+                                                      .PUT("", contentType(MediaType.APPLICATION_JSON), postHandler::putLinkPerPost);
+                                       })
                                        .path("/members", groupBuilder -> {
                                            groupBuilder.GET("", postHandler::getGroups)
                                                        .POST("", postHandler::applyAsMember)

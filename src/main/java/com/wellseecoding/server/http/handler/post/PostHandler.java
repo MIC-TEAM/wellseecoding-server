@@ -133,4 +133,33 @@ public class PostHandler {
                 })
                 .then(ServerResponse.ok().build());
     }
+
+    public Mono<ServerResponse> getLinkPerPost(ServerRequest request) {
+        return getPostId(request)
+                .zipWith(Mono.deferContextual(contextView -> Mono.just((Long) contextView.get(ContextNameRegistry.USER_ID))))
+                .flatMap(tuple -> {
+                    final long postId = tuple.getT1();
+                    final long userId = tuple.getT2();
+                    return Mono.fromFuture(postService.getLinkPerPost(postId, userId));
+                })
+                .flatMap(link -> ServerResponse.ok().body(BodyInserters.fromValue(link)));
+    }
+
+    public Mono<ServerResponse> putLinkPerPost(ServerRequest request) {
+        return getPostId(request)
+                .zipWith(Mono.deferContextual(contextView -> Mono.just((Long) contextView.get(ContextNameRegistry.USER_ID))))
+                .zipWith(getNewLink(request))
+                .flatMap(triple -> {
+                    final long postId = triple.getT1().getT1();
+                    final long userId = triple.getT1().getT2();
+                    final String newLink = triple.getT2();
+                    return Mono.fromFuture(postService.setLinkPerPost(postId, userId, newLink));
+                })
+                .then(ServerResponse.ok().build());
+    }
+
+    private Mono<String> getNewLink(ServerRequest request) {
+        return request.bodyToMono(LinkPerPostRequest.class)
+                      .map(LinkPerPostRequest::getLink);
+    }
 }
