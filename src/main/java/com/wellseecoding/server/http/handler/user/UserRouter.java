@@ -31,7 +31,8 @@ public class UserRouter {
                            .DELETE("", contentType(MediaType.APPLICATION_JSON), userHandler::removeLike)
                            .filter(new UserIdExtractor());
             }).path("/token", loginBuilder -> {
-                loginBuilder.POST("", contentType(MediaType.APPLICATION_JSON), userHandler::handleLogin);
+                loginBuilder.POST("", contentType(MediaType.APPLICATION_JSON), userHandler::handleLogin)
+                            .GET("/reset", userHandler::handleRenew);
             }).path("/groups", groupBuilder -> {
                 groupBuilder.GET("/registered", userHandler::getRegisteredGroups)
                             .GET("", userHandler::getGroups)

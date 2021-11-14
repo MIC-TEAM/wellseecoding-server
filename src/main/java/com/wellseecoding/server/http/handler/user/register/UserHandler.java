@@ -9,12 +9,15 @@ import com.wellseecoding.server.service.NotificationService;
 import com.wellseecoding.server.service.UserService;
 import com.wellseecoding.server.entity.user.User;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpCookie;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
+
+import static java.util.Objects.isNull;
 
 @AllArgsConstructor
 @Component
@@ -43,6 +46,21 @@ public class UserHandler {
                       })
                       .flatMap(this::createResponse);
     }
+
+    public Mono<ServerResponse> handleRenew(ServerRequest request) {
+        return getRefreshToken(request)
+                .flatMap(refreshToken -> Mono.fromFuture(userService.resetToken(refreshToken)))
+                .flatMap(this::createResponse);
+    }
+
+    private Mono<String> getRefreshToken(ServerRequest request) {
+        final HttpCookie refreshToken = request.cookies().getFirst(CookieNameRegistry.REFRESH_TOKEN);
+        if (isNull(refreshToken)) {
+            return Mono.error(new IllegalArgumentException("refresh token is missing"));
+        }
+        return Mono.just(refreshToken.getValue());
+    }
+
 
     private Mono<ServerResponse> createResponse(User user) {
         final String accessToken = accessTokenGenerator.generate(user.getId(), user.getUsername());
